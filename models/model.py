@@ -4,3 +4,5 @@ def get_most_recent_model():
 def train_model():
     return
 
+def select_model_by_id():
+    return
