@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <title>Metrics</title>
     <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/grid.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Facial Recognition</a>
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/home">Facial Recognition</a>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#">Sign Out</a>
+            <a class="nav-link" href="/">Sign Out</a>
         </li>
     </ul>
 </nav>
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -29,7 +32,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/select_photos">
+                        <a class="nav-link" href="/friends">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-users">
@@ -68,5 +71,141 @@
                 </ul>
             </div>
         </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="container">
+
+                <h1>Bootstrap grid examples</h1>
+                <p class="lead">Basic grid layouts to get you familiar with building within the Bootstrap grid
+                    system.</p>
+
+                <h3>Five grid tiers</h3>
+                <p>There are five tiers to the Bootstrap grid system, one for each range of devices we support. Each
+                    tier starts
+                    at a minimum viewport size and automatically applies to the larger devices unless overridden.</p>
+
+                <div class="row">
+                    <div class="col-4">.col-4</div>
+                    <div class="col-4">.col-4</div>
+                    <div class="col-4">.col-4</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">.col-sm-4</div>
+                    <div class="col-sm-4">.col-sm-4</div>
+                    <div class="col-sm-4">.col-sm-4</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">.col-md-4</div>
+                    <div class="col-md-4">.col-md-4</div>
+                    <div class="col-md-4">.col-md-4</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">.col-lg-4</div>
+                    <div class="col-lg-4">.col-lg-4</div>
+                    <div class="col-lg-4">.col-lg-4</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-4">.col-xl-4</div>
+                    <div class="col-xl-4">.col-xl-4</div>
+                    <div class="col-xl-4">.col-xl-4</div>
+                </div>
+
+                <h3>Three equal columns</h3>
+                <p>Get three equal-width columns <strong>starting at desktops and scaling to large desktops</strong>. On
+                    mobile
+                    devices, tablets and below, the columns will automatically stack.</p>
+                <div class="row">
+                    <div class="col-md-4">.col-md-4</div>
+                    <div class="col-md-4">.col-md-4</div>
+                    <div class="col-md-4">.col-md-4</div>
+                </div>
+
+                <h3>Three unequal columns</h3>
+                <p>Get three columns <strong>starting at desktops and scaling to large desktops</strong> of various
+                    widths.
+                    Remember, grid columns should add up to twelve for a single horizontal block. More than that, and
+                    columns
+                    start stacking no matter the viewport.</p>
+                <div class="row">
+                    <div class="col-md-3">.col-md-3</div>
+                    <div class="col-md-6">.col-md-6</div>
+                    <div class="col-md-3">.col-md-3</div>
+                </div>
+
+                <h3>Two columns</h3>
+                <p>Get two columns <strong>starting at desktops and scaling to large desktops</strong>.</p>
+                <div class="row">
+                    <div class="col-md-8">.col-md-8</div>
+                    <div class="col-md-4">.col-md-4</div>
+                </div>
+
+                <h3>Full width, single column</h3>
+                <p class="text-warning">No grid classes are necessary for full-width elements.</p>
+
+                <hr>
+
+                <h3>Two columns with two nested columns</h3>
+                <p>Per the documentation, nesting is easy—just put a row of columns within an existing column. This
+                    gives you
+                    two columns <strong>starting at desktops and scaling to large desktops</strong>, with another two
+                    (equal
+                    widths) within the larger column.</p>
+                <p>At mobile device sizes, tablets and down, these columns and their nested columns will stack.</p>
+                <div class="row">
+                    <div class="col-md-8">
+                        .col-md-8
+                        <div class="row">
+                            <div class="col-md-6">.col-md-6</div>
+                            <div class="col-md-6">.col-md-6</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">.col-md-4</div>
+                </div>
+
+                <hr>
+
+                <h3>Mixed: mobile and desktop</h3>
+                <p>The Bootstrap v4 grid system has five tiers of classes: xs (extra small), sm (small), md (medium), lg
+                    (large), and xl (extra large). You can use nearly any combination of these classes to create more
+                    dynamic
+                    and flexible layouts.</p>
+                <p>Each tier of classes scales up, meaning if you plan on setting the same widths for xs and sm, you
+                    only need
+                    to specify xs.</p>
+                <div class="row">
+                    <div class="col-12 col-md-8">.col-12 .col-md-8</div>
+                    <div class="col-6 col-md-4">.col-6 .col-md-4</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-4">.col-6 .col-md-4</div>
+                    <div class="col-6 col-md-4">.col-6 .col-md-4</div>
+                    <div class="col-6 col-md-4">.col-6 .col-md-4</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">.col-6</div>
+                    <div class="col-6">.col-6</div>
+                </div>
+
+                <hr>
+
+                <h3>Mixed: mobile, tablet, and desktop</h3>
+                <p></p>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-lg-8">.col-12 .col-sm-6 .col-lg-8</div>
+                    <div class="col-6 col-lg-4">.col-6 .col-lg-4</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-sm-4">.col-6 .col-sm-4</div>
+                    <div class="col-6 col-sm-4">.col-6 .col-sm-4</div>
+                    <div class="col-6 col-sm-4">.col-6 .col-sm-4</div>
+                </div>
+
+            </div> <!-- /container -->
+        </main>
+    </div>
+</div>
 </body>
 </html>

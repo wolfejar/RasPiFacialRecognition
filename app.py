@@ -21,7 +21,7 @@ def train():
     return render_template('models.html')
 
 
-@app.route('/select_photos')
+@app.route('/friends')
 def select_photos():
     return render_template('friends.html')
 
