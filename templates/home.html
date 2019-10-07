@@ -153,21 +153,31 @@
                         <th>Time Stamp</th>
                         <th>First</th>
                         <th>Last</th>
+                        <th>Confidence</th>
                         <th>Role</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>12:47 9/13/2019</td>
-                        <td>Jared</td>
-                        <td>Wolfe</td>
-                        <td>Owner</td>
+                        <td>{{ home_form.graph_data.data_points[0].timestamp }}</td>
+                        <td>{{ home_form.graph_data.data_points[0].user.first_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[0].user.last_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[0].confidence}}</td>
+                        <td>{{ home_form.graph_data.data_points[0].user.role}}</td>
                     </tr>
                     <tr>
-                        <td>9:32 9/07/2019</td>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td>Guest</td>
+                        <td>{{ home_form.graph_data.data_points[1].timestamp }}</td>
+                        <td>{{ home_form.graph_data.data_points[1].user.first_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[1].user.last_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[1].confidence}}</td>
+                        <td>{{ home_form.graph_data.data_points[1].user.role}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ home_form.graph_data.data_points[2].timestamp }}</td>
+                        <td>{{ home_form.graph_data.data_points[2].user.first_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[2].user.last_name}}</td>
+                        <td>{{ home_form.graph_data.data_points[2].confidence}}</td>
+                        <td>{{ home_form.graph_data.data_points[2].user.role}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -175,8 +185,6 @@
         </main>
     </div>
 </div>
-
-<p>{{ graph_data.classifications }}</p>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

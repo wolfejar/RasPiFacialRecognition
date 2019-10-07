@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from models.graph_data import GraphData
+import viewbuilders.home_form_view_builder as home_form_view_builder
 
 app = Flask(__name__)
 
@@ -11,9 +11,8 @@ def index_get():
 
 @app.route('/home')
 def home():
-    graph_data = GraphData(None)
-    graph_data.load_classifications_by_time_frame(time_frame=1)
-    return render_template('home.html', graph_data=graph_data)
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame='test')
+    return render_template('home.html', home_form=home_form)
 
 
 @app.route('/train')
