@@ -1,7 +1,8 @@
 import enum
 
+
 class TimeFrameEnum(enum.Enum):
-    day = 1
-    week = 2
-    month = 3
-    year = 4
+    Today = 1
+    Week = 2
+    Month = 3
+    Year = 4

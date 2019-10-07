@@ -54,7 +54,7 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/home">
+                        <a class="nav-link active" href="/home_get">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-home">
@@ -65,7 +65,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/friends">
+                        <a class="nav-link" href="/friends_get">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-users">
@@ -78,7 +78,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/metrics">
+                        <a class="nav-link" href="/metrics_get">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -90,7 +90,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/train">
+                        <a class="nav-link" href="/train_get">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-layers">
@@ -129,13 +129,15 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    &nbsp;
-                    <select class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                        <option value="1">Today</option>
-                        <option value="2">This Week</option>
-                        <option value="3">This Month</option>
-                        <option value="4">This Year</option>
-                    </select>
+                    &nbsp
+                    <form method='post' action="/home_post">
+                        <select name="timeframe" id="timeframe_select" class="btn btn-sm btn-outline-secondary dropdown-toggle" onchange="this.form.submit()">
+                            <option value="1">Today</option>
+                            <option value="2">This Week</option>
+                            <option value="3">This Month</option>
+                            <option value="4">This Year</option>
+                        </select>
+                    </form>
                 </div>
                 <div class="btn-group mr-2">
                     <button class="btn btn-sm btn-outline-secondary">Export</button>
@@ -145,7 +147,7 @@
             <canvas class="my-4 chartjs-render-monitor" id="myChart" width="537" height="226"
                     style="display: block; width: 537px; height: 226px;"></canvas>
 
-            <h2>September</h2>
+            <h2>{{ home_form.graph_data.time_frame }}</h2>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -195,6 +197,15 @@
 <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="../../assets/js/vendor/popper.min.js"></script>
 <script src="../../dist/js/bootstrap.min.js"></script>
+
+<script>
+function setSelectedIndex(i) {
+    $('#timeframe_select').append('<option disabled hidden value="' + i + '" selected="selected">' + i + '</option>');
+    return;
+}
+
+setSelectedIndex('{{ home_form.graph_data.time_frame }}');
+</script>
 
 <!-- Icons -->
 <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
