@@ -21,7 +21,7 @@ class SQL:
         # ''')
         # classifications = self.my_cursor.fetchall()
 
-        # sql will actually load OwnerUser and GuestUser objects from MySQL rather than Jim, Jeff, Joe, etc
+        # sql will load OwnerUser and GuestUser objects and other classification data from MySQL
         users = [OwnerUser(12345, 'Jim', 'Smith'),
                  GuestUser(12346, 'Joe', 'Doe'),
                  GuestUser(12347, 'Jeff', 'Tate')]
