@@ -9,4 +9,3 @@ def validate_sign_in(username, password):
         return False
     else:
         return pbkdf2_sha256.verify(password, hashed_pass)
-    return
