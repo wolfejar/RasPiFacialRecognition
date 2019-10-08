@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import viewbuilders.home_form_view_builder as home_form_view_builder
 from models.time_frame_enum import TimeFrameEnum
+import validators.sign_in_validator as sign_in_validator
 app = Flask(__name__)
 
 
@@ -13,7 +14,20 @@ def index_get():
 @app.route('/index_post', methods=['POST'])
 def index_post():
     # sign-in logic here
-    return home_get()
+    email = request.form['email']
+    password = request.form['password']
+    success = sign_in_validator.validate_sign_in(username=email, password=password)
+    if success:
+        session['email'] = email
+        return home_get()
+    else:
+        return home_get()  # change to render sign in page once mysql connected
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('email', None)
+    return index_get()
 
 
 @app.route('/home_get', methods=['GET'])

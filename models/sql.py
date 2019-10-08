@@ -2,6 +2,7 @@ import mysql.connector
 from models.classification import Classification
 from models.user import OwnerUser, GuestUser
 
+
 class SQL:
     def __init__(self, ):
         '''
@@ -30,3 +31,18 @@ class SQL:
             Classification(friends=users, output=[0.14, 0.98, 0.23], timestamp='11/22/2019'),
             Classification(friends=users, output=[0.07, 0.33, 0.91], timestamp='11/23/2019')]
         return classifications
+
+    def get_hashed_pass(self, username):
+        '''
+        :param username:
+        :return:
+        self.my_cursor.execute(
+            SELECT S.HashedPass
+            From Student S
+            Where S.Email = '{}'
+        .format(email))
+        row = self.my_cursor.fetchone()
+        if row is None:
+            return None
+        return row[0]'''
+        return None
