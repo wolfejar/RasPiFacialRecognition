@@ -1,9 +1,5 @@
 class UserHomeForm:
-    def __init__(self, graph_data):
-        self.graph_data = graph_data
-
-    def set_graph_data(self, graph_data):
-        self.graph_data = graph_data
-
-    def get_graph_data(self):
-        return self.graph_data
+    def __init__(self, table_data, chart_x_values, chart_y_values):
+        self.table_data = table_data
+        self.chart_x_values = chart_x_values
+        self.chart_y_values = chart_y_values

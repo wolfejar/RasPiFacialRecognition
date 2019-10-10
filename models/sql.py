@@ -4,7 +4,7 @@ from models.user import OwnerUser, GuestUser
 
 
 class SQL:
-    def __init__(self, ):
+    def __init__(self):
         '''
         self.mydb = mysql.connector.connect(
             host="localhost",
@@ -22,7 +22,7 @@ class SQL:
         # ''')
         # classifications = self.my_cursor.fetchall()
 
-        # sql will load OwnerUser and GuestUser objects and other classification data from MySQL
+        # sql will load OwnerUser and GuestUser objects and other classification data based on time frame from MySQL
         users = [OwnerUser(12345, 'Jim', 'Smith'),
                  GuestUser(12346, 'Joe', 'Doe'),
                  GuestUser(12347, 'Jeff', 'Tate')]
