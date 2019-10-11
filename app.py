@@ -16,8 +16,7 @@ def index_post():
     # sign-in logic here
     email = request.form['email']
     password = request.form['password']
-    success = sign_in_validator.validate_sign_in(username=email, password=password)
-    if success:
+    if sign_in_validator.validate_sign_in(username=email, password=password):
         session['email'] = email
         return home_get()
     else:
