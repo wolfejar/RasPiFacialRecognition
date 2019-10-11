@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, session
 import viewbuilders.home_form_view_builder as home_form_view_builder
 from models.time_frame_enum import TimeFrameEnum
 import validators.sign_in_validator as sign_in_validator
+import validators.sign_up_validator as sign_up_validator
 app = Flask(__name__)
+app.secret_key = 'super secret key'
 
 
 @app.route('/')
@@ -20,7 +22,29 @@ def index_post():
         session['email'] = email
         return home_get()
     else:
-        return home_get()  # change to render sign in page once mysql connected
+        return index_get()  # change to render sign in page once mysql connected
+
+
+@app.route('/sign_up_get', methods=['GET'])
+def sign_up_get():
+    # sign-in logic here
+    return render_template('sign_up.html')
+
+
+@app.route('/sign_up_post', methods=['POST'])
+def sign_up_post():
+    email = request.form['email']
+    password = request.form['password']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    role = 'User'
+    success = sign_up_validator.validate_sign_up(
+        username=email, password=password, first_name=first_name, last_name=last_name, role=role
+    )
+    if success:
+        return home_get()
+    else:
+        return sign_up_get()
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -31,14 +55,14 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=TimeFrameEnum(1).name)
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame='2009-01-28 21:00:00')
     return render_template('home.html', home_form=home_form)
 
 
 @app.route('/home_post', methods=['POST'])
 def home_post():
     time_frame = TimeFrameEnum(int(request.form.get('timeframe'))).name
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=time_frame)
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame='2009-01-28 21:00:00')
     return render_template('home.html', home_form=home_form)
 
 
@@ -58,5 +82,4 @@ def metrics_get():
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super secret key'
     app.run(debug=True)
