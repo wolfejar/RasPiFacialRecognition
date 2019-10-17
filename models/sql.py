@@ -21,14 +21,14 @@ class SQL:
             '''.format(username))
         return self.my_cursor.fetchone()[0]
 
-    def load_model_classifications_by_time_frame(self, model_id, time_frame):
+    def load_model_classifications_since_time_stamp(self, model_id, time_stamp):
         # here will run a sql script or call stored procedure in mysql database
         self.my_cursor.execute('''
             Select * 
             from Model M
             JOIN ModelUserClassification MUC on MUC.ModelId = M.ModelId
             where M.ModelId = {} and MUC.ClassificationTimestamp > '{}'
-        '''.format(model_id, time_frame))
+        '''.format(model_id, time_stamp))
 
         classifications = self.my_cursor.fetchall()
 

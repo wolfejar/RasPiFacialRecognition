@@ -56,14 +56,14 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame='2009-01-28 21:00:00')
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=TimeFrameEnum.Today)
     return render_template('home.html', home_form=home_form)
 
 
 @app.route('/home_post', methods=['POST'])
 def home_post():
     time_frame = TimeFrameEnum(int(request.form.get('timeframe'))).name
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame='2009-01-28 21:00:00')
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=time_frame)
     return render_template('home.html', home_form=home_form)
 
 
