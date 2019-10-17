@@ -22,7 +22,6 @@ class SQL:
         return self.my_cursor.fetchone()[0]
 
     def load_model_classifications_since_time_stamp(self, model_id, time_stamp):
-        # here will run a sql script or call stored procedure in mysql database
         self.my_cursor.execute('''
             Select * 
             from Model M

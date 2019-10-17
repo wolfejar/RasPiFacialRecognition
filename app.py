@@ -56,7 +56,7 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=TimeFrameEnum.Today)
+    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=TimeFrameEnum.Today.name)
     return render_template('home.html', home_form=home_form)
 
 
