@@ -1,5 +1,5 @@
 from models.sql import SQL
-from friends_form import FriendsForm
+from views.friends_form import FriendsForm
 from models.friend import Friend
 
 

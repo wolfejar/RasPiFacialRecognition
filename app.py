@@ -22,9 +22,9 @@ def index_post():
     password = request.form['password']
     if sign_in_validator.validate_sign_in(username=email, password=password):
         session['email'] = email
-        return home_get()
+        return redirect(url_for('home_get'))
     else:
-        return index_get()  # change to render sign in page once mysql connected
+        return index_get()
 
 
 @app.route('/sign_up_get', methods=['GET'])
@@ -43,7 +43,7 @@ def sign_up_post():
         username=email, password=password, first_name=first_name, last_name=last_name
     )
     if success:
-        return home_get()
+        return redirect(url_for('home_get'))
     else:
         return sign_up_get()
 
@@ -93,7 +93,7 @@ def add_friend_manual_post():
             username=email, first_name=first_name, last_name=last_name, home_username=home_username):
         return redirect(url_for('friends_get'))
     else:
-        return add_friend_manual_get()
+        return redirect(url_for('add_friend_manual_get'))
 
 
 @app.route('/metrics_get', methods=['GET'])

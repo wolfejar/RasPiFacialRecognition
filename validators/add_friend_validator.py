@@ -1,4 +1,4 @@
-from sql import SQL
+from models.sql import SQL
 
 
 def validate_friend(username, first_name, last_name, home_username):
