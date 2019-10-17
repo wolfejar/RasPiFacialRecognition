@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session
 import viewbuilders.home_form_view_builder as home_form_view_builder
+import viewbuilders.friends_form_view_builder as friends_form_view_builder
 from models.time_frame_enum import TimeFrameEnum
 import validators.sign_in_validator as sign_in_validator
 import validators.sign_up_validator as sign_up_validator
@@ -72,8 +73,9 @@ def train_get():
 
 
 @app.route('/friends_get', methods=['GET'])
-def select_photos_get():
-    return render_template('friends.html')
+def friends_get():
+    friends_form = friends_form_view_builder.build_friends_form(session['email'])
+    return render_template('friends.html', friends_form=friends_form)
 
 
 @app.route('/metrics_get', methods=['GET'])

@@ -1,6 +1,4 @@
 import mysql.connector
-from models.classification import Classification
-from models.user import OwnerUser, GuestUser
 
 
 class SQL:
@@ -14,6 +12,15 @@ class SQL:
         )
         self.my_cursor = self.mydb.cursor()
 
+    def get_user_id(self, username):
+        self.my_cursor.execute(
+            '''
+            Select U.UserId
+            From AppUser U
+            WHERE U.username = '{}'
+            '''.format(username))
+        return self.my_cursor.fetchone()[0]
+
     def load_model_classifications_by_time_frame(self, model_id, time_frame):
         # here will run a sql script or call stored procedure in mysql database
         self.my_cursor.execute('''
@@ -24,16 +31,7 @@ class SQL:
         '''.format(model_id, time_frame))
 
         classifications = self.my_cursor.fetchall()
-        print(classifications)
 
-        # sql will load OwnerUser and GuestUser objects and other classification data based on time frame from MySQL
-        users = [OwnerUser(12345, 'Jim', 'Smith'),
-                 GuestUser(12346, 'Joe', 'Doe'),
-                 GuestUser(12347, 'Jeff', 'Tate')]
-        classifications = [
-            Classification(friends=users, output=[0.87, 0.13, 0.05], timestamp='11/21/2019'),
-            Classification(friends=users, output=[0.14, 0.98, 0.23], timestamp='11/22/2019'),
-            Classification(friends=users, output=[0.07, 0.33, 0.91], timestamp='11/23/2019')]
         return classifications
 
     def get_hashed_pass(self, username):
@@ -54,3 +52,22 @@ class SQL:
             INSERT INTO AppUser(UserName, HashedPassword, FirstName, LastName, Role)
             Values ('{}', '{}', '{}', '{}', '{}');
             '''.format(username, password, first_name, last_name, role))
+        user_id = self.get_user_id(username)
+        self.my_cursor.execute(
+            '''
+            UPDATE AppUser
+            SET HomeUserId = '{}'
+            WHERE username = '{}'
+            '''.format(user_id, username)
+        )
+
+    def get_friends(self, username):
+        user_id = self.get_user_id(username)
+        self.my_cursor.execute('''
+            Select *
+            From AppUser U
+            Where U.HomeUserId = '{}' and U.UserId != '{}'
+        '''.format(user_id, user_id))
+        rows = self.my_cursor.fetchall()
+        print(rows)
+        return rows
