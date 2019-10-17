@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 import viewbuilders.home_form_view_builder as home_form_view_builder
 import viewbuilders.friends_form_view_builder as friends_form_view_builder
 from models.time_frame_enum import TimeFrameEnum
+import validators.add_friend_validator as add_friend_validator
 import validators.sign_in_validator as sign_in_validator
 import validators.sign_up_validator as sign_up_validator
 app = Flask(__name__)
@@ -38,9 +39,8 @@ def sign_up_post():
     password = request.form['password']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
-    role = 'User'
     success = sign_up_validator.validate_sign_up(
-        username=email, password=password, first_name=first_name, last_name=last_name, role=role
+        username=email, password=password, first_name=first_name, last_name=last_name
     )
     if success:
         return home_get()
@@ -76,6 +76,24 @@ def train_get():
 def friends_get():
     friends_form = friends_form_view_builder.build_friends_form(session['email'])
     return render_template('friends.html', friends_form=friends_form)
+
+
+@app.route('/add_friend_manual_get', methods=['GET'])
+def add_friend_manual_get():
+    return render_template('add_friend_manual.html')
+
+
+@app.route('/add_friend_manual_post', methods=['POST'])
+def add_friend_manual_post():
+    email = request.form['email']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    home_username = session['email']
+    if add_friend_validator.validate_friend(
+            username=email, first_name=first_name, last_name=last_name, home_username=home_username):
+        return redirect(url_for('friends_get'))
+    else:
+        return add_friend_manual_get()
 
 
 @app.route('/metrics_get', methods=['GET'])

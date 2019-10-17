@@ -46,12 +46,12 @@ class SQL:
             return None
         return row[0]
 
-    def create_account(self, username, password, first_name, last_name, role):
+    def create_account(self, username, password, first_name, last_name):
         self.my_cursor.execute(
             '''
-            INSERT INTO AppUser(UserName, HashedPassword, FirstName, LastName, Role)
-            Values ('{}', '{}', '{}', '{}', '{}');
-            '''.format(username, password, first_name, last_name, role))
+            INSERT INTO AppUser(UserName, HashedPassword, FirstName, LastName)
+            Values ('{}', '{}', '{}', '{}');
+            '''.format(username, password, first_name, last_name))
         user_id = self.get_user_id(username)
         self.my_cursor.execute(
             '''
@@ -64,10 +64,27 @@ class SQL:
     def get_friends(self, username):
         user_id = self.get_user_id(username)
         self.my_cursor.execute('''
-            Select *
+            Select U.UserName, U.FirstName, U.LastName
             From AppUser U
             Where U.HomeUserId = '{}' and U.UserId != '{}'
         '''.format(user_id, user_id))
         rows = self.my_cursor.fetchall()
         print(rows)
         return rows
+
+    def add_friend(self, username, first_name, last_name, home_username):
+        home_user_id = self.get_user_id(home_username)
+        self.my_cursor.execute(
+            '''
+            Select U.HashedPassword
+            From AppUser U
+            Where U.UserId = '{}'
+            '''.format(home_user_id)
+        )
+        hashed_pass = self.my_cursor.fetchone()[0]
+        self.my_cursor.execute(
+            '''
+            INSERT INTO AppUser(UserName, HashedPassword, FirstName, LastName, HomeUserId)
+            VALUES ('{}', '{}', '{}', '{}', '{}');
+            '''.format(username, hashed_pass, first_name, last_name, home_user_id)
+        )
