@@ -1,5 +1,6 @@
 import mysql.connector
-
+import random
+import string
 
 class SQL:
     def __init__(self):
@@ -75,18 +76,10 @@ class SQL:
             From AppUser U
             Where U.HomeUserId = '{}' and U.UserId = '{}'
         '''.format(home_user_id, friend_user_id))
-        return self.my_cursor.fetchone()[0]
+        return self.my_cursor.fetchone()
 
-    def add_friend(self, username, first_name, last_name, home_username):
+    def add_friend(self, username, first_name, last_name, home_username, hashed_pass):
         home_user_id = self.get_user_id(home_username)
-        self.my_cursor.execute(
-            '''
-            Select U.HashedPassword
-            From AppUser U
-            Where U.UserId = '{}'
-            '''.format(home_user_id)
-        )
-        hashed_pass = self.my_cursor.fetchone()[0]
         self.my_cursor.execute(
             '''
             INSERT INTO AppUser(UserName, HashedPassword, FirstName, LastName, HomeUserId)
