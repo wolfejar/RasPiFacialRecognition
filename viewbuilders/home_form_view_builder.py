@@ -12,7 +12,7 @@ def build_home_form(model_id, time_frame):
     time_stamp = get_time_stamp(time_frame)
     classifications = sql_instance.load_model_classifications_since_time_stamp(model_id=model_id, time_stamp=time_stamp)
     # need to convert these classifications to actual classification objects
-    table_data = TableData(classifications=classifications, time_frame=time_frame)
+    table_data = TableData(classifications=classifications, time_frame=time_frame.name)
     chart_y_values = [data_point.confidence for data_point in table_data.data_points]
     chart_x_values = [data_point.timestamp for data_point in table_data.data_points]
     return UserHomeForm(table_data=table_data, chart_x_values=chart_x_values, chart_y_values=chart_y_values)
@@ -20,15 +20,15 @@ def build_home_form(model_id, time_frame):
 
 def get_time_stamp(time_frame):
     today = datetime.utcnow().date()
-    if time_frame.name == 'week':
+    if time_frame.name == 'Week':
         today = datetime.now()
         start = today - timedelta((today.weekday() + 1) % 7)
         last_sunday = start + relativedelta.relativedelta(weekday=relativedelta.SU(-1))
         return last_sunday
-    elif time_frame.name == 'month':
-        return datetime(today.year, today.month, 0, tzinfo=tz.tzutc())
-    elif time_frame.name == 'year':
-        return datetime(today.year, 0, 0, tzinfo=tz.tzutc())
+    elif time_frame.name == 'Month':
+        return datetime(today.year, today.month, 1, tzinfo=tz.tzutc())
+    elif time_frame.name == 'Year':
+        return datetime(today.year, 1, 1, tzinfo=tz.tzutc())
     else:
         # return timestamp for beginning of current day
         return datetime(today.year, today.month, today.day, tzinfo=tz.tzutc())
