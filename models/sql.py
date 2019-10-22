@@ -29,9 +29,7 @@ class SQL:
             where M.ModelId = {} and MUC.ClassificationTimestamp > '{}'
         '''.format(model_id, time_stamp))
 
-        classifications = self.my_cursor.fetchall()
-
-        return classifications
+        return self.my_cursor.fetchall()
 
     def get_hashed_pass(self, username):
         self.my_cursor.execute(
@@ -67,9 +65,17 @@ class SQL:
             From AppUser U
             Where U.HomeUserId = '{}' and U.UserId != '{}'
         '''.format(user_id, user_id))
-        rows = self.my_cursor.fetchall()
-        print(rows)
-        return rows
+        return self.my_cursor.fetchall()
+
+    def get_individual_friend(self, home_username, friend_username):
+        home_user_id = self.get_user_id(home_username)
+        friend_user_id = self.get_user_id(friend_username)
+        self.my_cursor.execute('''
+            Select U.UserName, U.FirstName, U.LastName
+            From AppUser U
+            Where U.HomeUserId = '{}' and U.UserId = '{}'
+        '''.format(home_user_id, friend_user_id))
+        return self.my_cursor.fetchone()[0]
 
     def add_friend(self, username, first_name, last_name, home_username):
         home_user_id = self.get_user_id(home_username)
