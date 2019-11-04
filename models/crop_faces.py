@@ -5,11 +5,23 @@ import os
 
 
 def crop_and_review_faces(user_name, input_path, output_path):
-    # clear existing images in ouput directory
-    input_path = input_path + '/' + user_name
-    image_paths = list(paths.list_images(input_path))
+    # clear images in needs_review directory
+    folder = os.path.abspath('./static/img/out/needs_review/')
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)
 
-    images_to_review = []
+    input_path = os.path.abspath(input_path + user_name + '/')
+    output_path = os.path.abspath(output_path + user_name + '/')
+    print(input_path)
+    print(output_path)
+    image_paths = list(paths.list_images(input_path))
+    print(image_paths)
+    images_need_review = False
 
     # loop over the image paths
     for (i, imagePath) in enumerate(image_paths):
@@ -29,6 +41,7 @@ def crop_and_review_faces(user_name, input_path, output_path):
                                                 model='hog')
 
         cropped_images = []
+        images_to_review = []
         for box in boxes:
             top, right, bottom, left = box
             print("{},{},{},{}".format(top, right, bottom, left))
@@ -36,15 +49,19 @@ def crop_and_review_faces(user_name, input_path, output_path):
             cropped_images.append(crop_img)
             # if multiple images found, we need to just save the largest image?
             # or send multiple images back up to webpage and let the user choose which one is them.
-        if len(boxes) > 1:
+        if len(cropped_images) > 1:
+            images_need_review = True
             images_to_review.append(cropped_images)
         else:
             top, right, bottom, left = boxes[0]
             crop_img = image[top: bottom, left: right]
-            if not os.path.exists(output_path + '/' + user_name):
-                os.mkdir(output_path + '/' + user_name)
-            cv2.imwrite(output_path + '/' + user_name + '/' + str(i) + '.png', crop_img)
-    return images_to_review
-
-
-crop_and_review_faces('jared_wolfe', '../static/img/data', '../static/img/out')
+            if not os.path.exists(output_path):
+                os.mkdir(output_path)
+            cv2.imwrite(output_path + str(i) + '.png', crop_img)
+        for images in images_to_review:
+            for k, image in enumerate(images):
+                # cv2.imshow("review", image)
+                # cv2.waitKey(0)
+                print('../static/img/out/needs_review/' + str(i) + '-' + str(k) + '.png')
+                cv2.imwrite('../static/img/out/needs_review/' + str(i) + '-' + str(k) + '.png', image)
+    return images_need_review
