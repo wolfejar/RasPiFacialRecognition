@@ -22,12 +22,13 @@ def crop_and_review_faces(user_id, input_path, output_path):
     image_paths = list(paths.list_images(input_path))
     images_need_review = False
 
+    file_num = 1
+    needs_review_indexes = []
+    index_of_index = 0
     # loop over the image paths
-    for (i, imagePath) in enumerate(image_paths):
+    for i, imagePath in enumerate(image_paths):
         # extract the person name from the image path
-        print("[INFO] processing image {}/{}".format(i + 1,
-                                                     len(image_paths)))
-        name = imagePath.split(os.path.sep)[-2]
+        print("[INFO] processing image {}/{}".format(i+1, len(image_paths)))
 
         # load the input image and convert it from RGB (OpenCV ordering)
         # to dlib ordering (RGB)
@@ -46,21 +47,23 @@ def crop_and_review_faces(user_id, input_path, output_path):
             print("{},{},{},{}".format(top, right, bottom, left))
             crop_img = image[top: bottom, left: right]
             cropped_images.append(crop_img)
-            # if multiple images found, we need to just save the largest image?
-            # or send multiple images back up to webpage and let the user choose which one is them.
+            # if multiple images found, send multiple images back up to page
+            # and let the user choose which ones are correct
         if len(cropped_images) > 1:
             images_need_review = True
             images_to_review.append(cropped_images)
+            for k in range(len(cropped_images)):
+                needs_review_indexes.append(file_num + k)
         else:
             top, right, bottom, left = boxes[0]
             crop_img = image[top: bottom, left: right]
             if not os.path.exists(output_path):
                 os.mkdir(output_path)
-            cv2.imwrite(output_path + '/' + str(i) + '.png', crop_img)
+            cv2.imwrite(output_path + '/' + str(file_num) + '.png', crop_img)
         for images in images_to_review:
-            for k, image in enumerate(images):
-                # cv2.imshow("review", image)
-                # cv2.waitKey(0)
-                print('../static/img/out/needs_review/' + str(i) + '-' + str(k) + '.png')
-                cv2.imwrite(folder + '/' + str(i) + '-' + str(k) + '.png', image)
+            for image in images:
+                print('../static/img/out/needs_review/' + str(needs_review_indexes[index_of_index]) + '.png')
+                cv2.imwrite(folder + '/' + str(needs_review_indexes[index_of_index]) + '.png', image)
+                index_of_index += 1
+        file_num += len(cropped_images)
     return images_need_review
