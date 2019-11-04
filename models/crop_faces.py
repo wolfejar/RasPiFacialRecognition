@@ -4,7 +4,7 @@ import cv2
 import os
 
 
-def crop_and_review_faces(user_name, input_path, output_path):
+def crop_and_review_faces(user_id, input_path, output_path):
     # clear images in needs_review directory
     folder = os.path.abspath('./static/img/out/needs_review/')
     for the_file in os.listdir(folder):
@@ -15,12 +15,11 @@ def crop_and_review_faces(user_name, input_path, output_path):
         except Exception as e:
             print(e)
 
-    input_path = os.path.abspath(input_path + user_name + '/')
-    output_path = os.path.abspath(output_path + user_name + '/')
-    print(input_path)
-    print(output_path)
+    input_path = os.path.abspath(input_path + user_id + '/')
+    output_path = os.path.abspath(output_path + user_id + '/')
+    print('Input: ' + input_path)
+    print('Output: ' + output_path)
     image_paths = list(paths.list_images(input_path))
-    print(image_paths)
     images_need_review = False
 
     # loop over the image paths
@@ -57,11 +56,11 @@ def crop_and_review_faces(user_name, input_path, output_path):
             crop_img = image[top: bottom, left: right]
             if not os.path.exists(output_path):
                 os.mkdir(output_path)
-            cv2.imwrite(output_path + str(i) + '.png', crop_img)
+            cv2.imwrite(output_path + '/' + str(i) + '.png', crop_img)
         for images in images_to_review:
             for k, image in enumerate(images):
                 # cv2.imshow("review", image)
                 # cv2.waitKey(0)
                 print('../static/img/out/needs_review/' + str(i) + '-' + str(k) + '.png')
-                cv2.imwrite('../static/img/out/needs_review/' + str(i) + '-' + str(k) + '.png', image)
+                cv2.imwrite(folder + '/' + str(i) + '-' + str(k) + '.png', image)
     return images_need_review
