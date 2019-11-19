@@ -21,12 +21,12 @@ def build_edit_friend_form(home_username, friend_username, review):
             web_img_paths.append(web_path)
         print(web_img_paths)
     else:
-        friend_path = os.path.abspath('static/img/data/' + friend_username)
+        friend_path = os.path.abspath('static/img/data/' + str(friend.user_id))
         print(friend_path)
         image_paths = list(paths.list_images(friend_path))
         for image_path in image_paths:
             file_name = image_path.split('/')[-1]
-            web_path = '../static/img/data/' + friend_username + '/' + file_name
+            web_path = '../static/img/data/' + str(friend.user_id) + '/' + file_name
             web_img_paths.append(web_path)
         print(web_img_paths)
     return EditFriendForm(friend=friend, image_paths=web_img_paths)

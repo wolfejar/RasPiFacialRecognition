@@ -67,3 +67,11 @@ def crop_and_review_faces(user_id, input_path, output_path):
                 index_of_index += 1
         file_num += len(cropped_images)
     return images_need_review
+
+
+def save_reviewed_faces(images_indeces, user_id,  output_path):
+    output_path = os.path.abspath(output_path + user_id + '/')
+    for file_num in images_indeces:
+        in_path = os.path.abspath('./static/img/out/needs_review/' + file_num + '.png')
+        crop_img = cv2.imread(in_path)
+        cv2.imwrite(output_path + '/' + str(file_num) + '.png', crop_img)

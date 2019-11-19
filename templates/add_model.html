@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Models</title>
+    <title>Add Model</title>
     <link href="../static/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
@@ -70,48 +70,14 @@
                 </ul>
             </div>
         </nav>
-
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <!-- Main jumbotron for a primary marketing message or call to action -->
-            <div class="jumbotron">
-                <div class="container">
-                    <h1 class="display-3">Models</h1>
-                    <p>Use this page for training new models. User will select friends to be classified, adjust model
-                        parameters, and deploy from this page.</p>
-                    <p><a class="btn btn-primary btn-lg" methods="get" href="/add_model_get" role="button">Add Model</a></p>
-                </div>
-            </div>
-
-            <div class="container">
-                <!-- Example row of columns -->
-                <div class="row">
-                    <div class="col-md-4">
-                        <h2>Model 1</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>Model 2</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>Model 3</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-                    </div>
-                </div>
-
-                <hr>
-
-            </div>
-
+            <!-- required -->
+            <form>
+                <h1>Please select all friends to be recognized by the model</h1>
+                <p>friends listed here</p>
+                <h1>If you would like to set your own model parameters, adjust them here</h1>
+                <p>model parameters listed here</p>
+            </form>
         </main>
     </div>
 </div>

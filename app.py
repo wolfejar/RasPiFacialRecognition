@@ -131,7 +131,7 @@ def edit_or_delete_friend_post():
 @app.route('/edit_friend_from_list_post', methods=['POST'])
 def edit_friend_from_list_post(form):
     edit_friend_form = edit_friend_form_view_builder.build_edit_friend_form(
-        home_username=session['email'], friend_username=form['email'], review=False)
+        home_username=session['email'], friend_username=form['username'], review=False)
     return render_template('edit_friend.html', friend_form=edit_friend_form)
 
 
@@ -143,12 +143,30 @@ def review_images_get(home_username, friend_username, review):
     return render_template('review_faces.html', friend_form=review_images_form)
 
 
+@app.route('/review_images_post', methods=['POST'])
+def review_images_post():
+    print('Saving selected review images')
+    print(request.form.getlist('option'))
+    selected_images = request.form.getlist('option')
+    friend = models.friend.load(session['email'], request.form['email'])
+    cf.save_reviewed_faces(selected_images, str(friend.user_id), './static/img/out/training/')
+    friend_form = friends_form_view_builder.build_friends_form(session['email'])
+    return render_template('friends.html', friends_form=friend_form)
+
+
 @app.route('/delete_friend', methods=['POST'])
 def delete_friend_post(form):
     # delete friend here
     friend_to_delete = form['username']
     delete_friend_validator.validate_delete_friend(session['email'], friend_to_delete)
     return redirect(url_for('friends_get'))
+
+
+@app.route('/add_model_get', methods=['GET'])
+def add_model_get():
+    # get friends list here and add to form
+
+    return render_template('add_model.html')
 
 
 @app.route('/metrics_get', methods=['GET'])
