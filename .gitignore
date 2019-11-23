@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 static/img/data/
 static/img/out/
+static/models/
