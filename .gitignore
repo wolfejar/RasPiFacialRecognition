@@ -2,6 +2,6 @@
 .idea/
 __pycache__/
 .DS_Store
-static/img/data/
-static/img/out/
-static/models/
+static/img/data/*
+static/img/out/*
+static/models/*
