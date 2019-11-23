@@ -39,7 +39,7 @@ def crop_and_review_faces(user_id, input_path, output_path):
         # corresponding to each face in the input image
         boxes = face_recognition.face_locations(rgb,
                                                 model='hog')
-
+        print(boxes)
         cropped_images = []
         images_to_review = []
         for box in boxes:
@@ -54,6 +54,8 @@ def crop_and_review_faces(user_id, input_path, output_path):
             images_to_review.append(cropped_images)
             for k in range(len(cropped_images)):
                 needs_review_indexes.append(file_num + k)
+        elif len(cropped_images) == 0:
+            continue
         else:
             top, right, bottom, left = boxes[0]
             crop_img = image[top: bottom, left: right]

@@ -1,11 +1,8 @@
-from .time_frame_enum import TimeFrameEnum
-
-
 class Classification:
-    def __init__(self, friends, output, timestamp):
-        self.friends = friends
-        self.output = output
+    def __init__(self, user_id, first_name, last_name, confidence, timestamp, image_path):
+        self.user_id = user_id
+        self.confidence = confidence
         self.timestamp = timestamp
-
-    def get_classification(self):
-        return tuple(zip(self.friends, self.output))
+        self.image_path = image_path
+        self.first_name = first_name
+        self.last_name = last_name

@@ -72,12 +72,21 @@
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <!-- required -->
-            <form>
-                <h1>Please select all friends to be recognized by the model</h1>
-                <p>friends listed here</p>
-                <h1>If you would like to set your own model parameters, adjust them here</h1>
+            <form action="/add_model_post" method="post">
+                <h2>Please select all friends to be recognized by the model</h2>
+                {% for friend in models_form.friends %}
+                    <label for="{{ friend.user_id }}">{{  friend.first_name }} {{ friend.last_name }}</label>
+                    <input type="checkbox" name="friend" id="{{ friend.user_id }}" value="{{ friend.user_id }}">
+                {% endfor %}
+                <h2>If you would like to set your own model parameters, adjust them here</h2>
                 <p>model parameters listed here</p>
+                <label for="model-name">Model Name</label>
+                <input type="text" id="model-name" name="model-name">
+                <button type="submit">Submit</button>
             </form>
+        <div class="loader">
+            <img class="loading-image" src="loading.jpg" alt="loading..">
+        </div>
         </main>
     </div>
 </div>

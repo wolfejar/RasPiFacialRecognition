@@ -12,6 +12,7 @@ def build_home_form(model_id, time_frame):
     time_stamp = get_time_stamp(time_frame)
     classifications = sql_instance.load_model_classifications_since_time_stamp(model_id=model_id, time_stamp=time_stamp)
     # need to convert these classifications to actual classification objects
+    print(classifications)
     table_data = TableData(classifications=classifications, time_frame=time_frame.name)
     chart_y_values = [data_point.confidence for data_point in table_data.data_points]
     chart_x_values = [data_point.timestamp for data_point in table_data.data_points]

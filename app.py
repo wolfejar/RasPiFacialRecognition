@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, session, redirect, url_for
 import viewbuilders.home_form_view_builder as home_form_view_builder
 import viewbuilders.friends_form_view_builder as friends_form_view_builder
 import viewbuilders.edit_friend_form_view_builder as edit_friend_form_view_builder
+from viewbuilders.models_form_view_builder import build_model_form
 from models.time_frame_enum import TimeFrameEnum
 import models.crop_faces as cf
+import models.model_train_pipeline as mtp
 import models.friend
 import validators.add_friend_validator as add_friend_validator
 import validators.sign_in_validator as sign_in_validator
@@ -64,20 +66,21 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=TimeFrameEnum.Today)
+    home_form = home_form_view_builder.build_home_form(model_id=1, time_frame=TimeFrameEnum.Today)
     return render_template('home.html', home_form=home_form)
 
 
 @app.route('/home_post', methods=['POST'])
 def home_post():
     time_frame = TimeFrameEnum(int(request.form.get('timeframe')))
-    home_form = home_form_view_builder.build_home_form(model_id=12345, time_frame=time_frame)
+    home_form = home_form_view_builder.build_home_form(model_id=1, time_frame=time_frame)
     return render_template('home.html', home_form=home_form)
 
 
 @app.route('/train_get', methods=['GET'])
 def train_get():
-    return render_template('models.html')
+    models_form = build_model_form(session['email'])
+    return render_template('models.html', models_form=models_form)
 
 
 @app.route('/friends_get', methods=['GET'])
@@ -117,21 +120,21 @@ def add_friend_images_post():
         image.save(save_dir + '/' + image.filename)
     if cf.crop_and_review_faces(str(friend.user_id), './static/img/data/', './static/img/out/training/'):
         return review_images_get(home_username=session['email'], friend_username=request.form['email'], review=True)
-    return edit_friend_from_list_post(request.form)
+    return friends_get()
 
 
 @app.route('/edit_or_delete_friend_post', methods=['POST'])
 def edit_or_delete_friend_post():
     if request.form['submit_button'] == 'Edit':
-        return edit_friend_from_list_post(request.form)
+        return edit_friend_from_list_post(request.form['username'])
     else:
         return delete_friend_post(request.form)
 
 
 @app.route('/edit_friend_from_list_post', methods=['POST'])
-def edit_friend_from_list_post(form):
+def edit_friend_from_list_post(username):
     edit_friend_form = edit_friend_form_view_builder.build_edit_friend_form(
-        home_username=session['email'], friend_username=form['username'], review=False)
+        home_username=session['email'], friend_username=username, review=False)
     return render_template('edit_friend.html', friend_form=edit_friend_form)
 
 
@@ -165,8 +168,25 @@ def delete_friend_post(form):
 @app.route('/add_model_get', methods=['GET'])
 def add_model_get():
     # get friends list here and add to form
+    models_form = build_model_form(session['email'])
+    return render_template('add_model.html', models_form=models_form)
 
-    return render_template('add_model.html')
+
+@app.route('/add_model_post', methods=['POST'])
+def add_model_post():
+    # will initialize model training here.
+    selected_friends = request.form.getlist('friend')
+    print(selected_friends)
+    selected_friends = [int(friend) for friend in selected_friends]
+    loaded_friends = []
+    for fr in selected_friends:
+        loaded_friends.append(models.friend.load_by_id(session['email'], fr))
+    # create the embeddings and save to directory
+    home_id = models.friend.load(session['email'], session['email']).user_id
+    model_name = request.form['model-name']
+    mtp.init_model_train_pipeline(home_id, loaded_friends, model_name)
+    models_form = build_model_form(session['email'])
+    return render_template('models.html', models_form=models_form)
 
 
 @app.route('/metrics_get', methods=['GET'])
@@ -175,4 +195,4 @@ def metrics_get():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

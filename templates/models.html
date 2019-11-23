@@ -72,6 +72,7 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <input hidden="hidden" value="models_form">
             <!-- Main jumbotron for a primary marketing message or call to action -->
             <div class="jumbotron">
                 <div class="container">
@@ -83,29 +84,22 @@
             </div>
 
             <div class="container">
-                <!-- Example row of columns -->
                 <div class="row">
+                {% for model in models_form.models %}
+
                     <div class="col-md-4">
-                        <h2>Model 1</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
+                        {% set list1 = model.file_path.split('/') %}
+                        <h2 class="text-truncate">{{ list1[-1][:-3] }}</h2>
+                        <p>{{ model.model_id }}</p>
+                        {% for c in model.classifications %}
+                            <p>{{ c.first_name }} {{ c.last_name }}</p>
+                            <img src="{{ c.image_path }}" height="100px" width="auto">
+                            <p>Timestamp: {{ c.timestamp }}</p>
+                            <p>Confidence: {{'%.2f'| format(c.confidence * 100|float)}}%</p>
+                        {% endfor %}
+                        <p><a class="btn btn-secondary" href="#" role="button">View Metrics »</a></p>
                     </div>
-                    <div class="col-md-4">
-                        <h2>Model 2</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>Model 3</h2>
-                        <p>Precision: 90%</p>
-                        <p>Accuracy: 87%</p>
-                        <p>Recall: 92%</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
-                    </div>
+                {% endfor %}
                 </div>
 
                 <hr>
