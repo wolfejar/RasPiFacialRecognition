@@ -1,14 +1,15 @@
 import mysql.connector
-import random
-import string
 
 
 class SQL:
     def __init__(self):
+        with open('./static/db_credentials.txt') as f:
+            user = f.readline()
+            passwd = f.readline()
         self.mydb = mysql.connector.connect(
             host="localhost",
-            user="root",
-            passwd="password",
+            user=user,
+            passwd=passwd,
             database="FacialRecognitionApp",
             autocommit=True
         )

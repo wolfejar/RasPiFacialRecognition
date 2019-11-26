@@ -5,3 +5,8 @@ __pycache__/
 static/img/data/*
 static/img/out/*
 static/models/*
+static/db_credentials.txt
+static/node_modules
+static/weights/
+static/package-lock.json
+static/package.json

@@ -12,10 +12,14 @@ import validators.sign_in_validator as sign_in_validator
 import validators.sign_up_validator as sign_up_validator
 import validators.delete_friend_validator as delete_friend_validator
 import os
-
+from OpenSSL import SSL
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
+
+# context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
+# context.use_privatekey_file('server.key')
+# context.use_certificate_file('server.crt')
 
 
 @app.route('/')
@@ -194,5 +198,10 @@ def metrics_get():
     return render_template('metrics.html')
 
 
+@app.route('/realtime_get', methods=['GET'])
+def realtime_get():
+    return render_template('realtime.html')
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', ssl_context='adhoc')
