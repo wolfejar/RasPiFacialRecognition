@@ -18,7 +18,8 @@ def build_model_form(username):
         classifications = []
         for c in classification_results:
             orig_path = c[6]
-            web_path = '../static/img/out/training/' + str(c[1]) + '/' + orig_path.split('/')[-1]
+            print(orig_path)
+            web_path = '../static/img/out/training/' + orig_path.split('/')[-2] + '/' + orig_path.split('/')[-1]
             classifications.append(Classification(c[1], c[2], c[3], c[4], c[5], web_path))
         models.append(ModelData(model_id=model[0], classifications=classifications, file_path=model[1]))
     return ModelsForm(friends=friends, models=models)

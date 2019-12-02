@@ -43,7 +43,7 @@ class SQL:
 
     def load_model_classifications_since_time_stamp(self, model_id, time_stamp):
         self.my_cursor.execute('''
-            Select * 
+            Select MUC.UserId, MUC.firstname, MUC.lastname, MUC.confidence, MUC.classificationtimestamp, MUC.imagepath
             from Model M
             JOIN ModelUserClassification MUC on MUC.ModelId = M.ModelId
             where M.ModelId = {} and MUC.ClassificationTimestamp > '{}'

@@ -11,7 +11,7 @@ from imutils import paths
 
 def init_model_train_pipeline(home_id, friends, model_name):
     ce.encode_faces(friends)
-    test_results = tm.train_classifier(home_id, friends, model_name)
+    test_results = tm.train_classifier(home_id, friends, model_name, hidden_layers=[10], epochs=5000)
     # now that model is trained, we need to create objects to be stored in mysql
     # we need Model - modelid, userid, filepath
     # ModelClassifications - on test set we need to return the user_id, model_id, is_train (no), timestamp, image_path,
@@ -30,11 +30,9 @@ def init_model_train_pipeline(home_id, friends, model_name):
     classi_bois = []
     for result in test_results:
         butt = []
-        print(result[0])
         train_img_index = result[2]
         result = result[0]
-        butt.append((result.tolist().index(max(result.tolist())), max(result.tolist()), train_img_index-1))
-        print(butt)
+        butt.append((result.tolist().index(max(result.tolist())), max(result.tolist()), train_img_index))
         classi_bois.append(butt)
 
     print(classi_bois)
@@ -42,15 +40,15 @@ def init_model_train_pipeline(home_id, friends, model_name):
     image_paths = []
     for f in friends:
         current_dir = os.path.abspath('./static/img/out/training/' + str(f.user_id) + '/')
-        for img in paths.list_images(current_dir):
+        for img in os.listdir(current_dir):
             image_paths.append(current_dir + '/' + img)
-    print(image_paths)
+    # for i, path in enumerate(image_paths):
+    #    print(i, path.split('/')[-2:])
     for i, c in enumerate(classi_bois):
         classifications.append(Classification(friends[c[0][0]].user_id, friends[c[0][0]].first_name,
                                               friends[c[0][0]].last_name, c[0][1], datetime.now(),
                                               image_paths[c[0][2]]))
 
-    print(classifications)
     for c in classifications:
         print(c.user_id)
         sql_instance.add_classification(model_id, 1, c)

@@ -84,7 +84,7 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=1, time_frame=TimeFrameEnum.Today)
+    home_form = home_form_view_builder.build_home_form(model_id=8, time_frame=TimeFrameEnum.Today)
     return render_template('home.html', home_form=home_form)
 
 
@@ -218,7 +218,7 @@ def realtime_get():
 
 @app.route('/classify_embeddings', methods=['POST'])
 def classify_embeddings():
-    classifier = ce.EmbeddingsClassifier(session['id'], 'test_2')
+    classifier = ce.EmbeddingsClassifier(session['id'], '3_10_5000')
     embeddings_str = request.data.decode("utf-8")
     result = classifier.classify_embeddings(json.loads(embeddings_str)['embeddings']).tolist()
     print(result)

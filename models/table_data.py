@@ -1,11 +1,13 @@
 def get_graph_data_point_from_classifications(classifications):
     data_points = []
     for classification in classifications:
-        greatest_confidence_index = classification.output.index(max(classification.output))
+        # greatest_confidence_index = classification.output.index(max(classification.output))
         data_points.append(
             TableDataPoint(timestamp=classification.timestamp,
-                           user=classification.friends[greatest_confidence_index],
-                           confidence=classification.output[greatest_confidence_index]))
+                           user=classification.user_id,
+                           confidence=classification.confidence,
+                           firstname=classification.first_name,
+                           lastname=classification.last_name))
     return data_points
 
 
@@ -17,7 +19,9 @@ class TableData:
 
 
 class TableDataPoint:
-    def __init__(self, timestamp, user, confidence):
+    def __init__(self, timestamp, user, confidence, firstname, lastname):
         self.timestamp = timestamp
         self.user = user
         self.confidence = confidence
+        self.firstname = firstname,
+        self.lastname = lastname

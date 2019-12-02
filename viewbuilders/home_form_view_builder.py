@@ -10,9 +10,12 @@ from datetime import datetime, timedelta
 def build_home_form(model_id, time_frame):
     sql_instance = SQL()
     time_stamp = get_time_stamp(time_frame)
-    classifications = sql_instance.load_model_classifications_since_time_stamp(model_id=model_id, time_stamp=time_stamp)
+    results = sql_instance.load_model_classifications_since_time_stamp(model_id=model_id, time_stamp=time_stamp)
     # need to convert these classifications to actual classification objects
-    print(classifications)
+    print(results)
+    classifications = []
+    for c in results:
+        classifications.append(Classification(c[0], c[1], c[2], c[3], c[4], c[5]))
     table_data = TableData(classifications=classifications, time_frame=time_frame.name)
     chart_y_values = [data_point.confidence for data_point in table_data.data_points]
     chart_x_values = [data_point.timestamp for data_point in table_data.data_points]
