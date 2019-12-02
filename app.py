@@ -91,7 +91,7 @@ def home_get():
 @app.route('/home_post', methods=['POST'])
 def home_post():
     time_frame = TimeFrameEnum(int(request.form.get('timeframe')))
-    home_form = home_form_view_builder.build_home_form(model_id=1, time_frame=time_frame)
+    home_form = home_form_view_builder.build_home_form(model_id=8, time_frame=time_frame)
     return render_template('home.html', home_form=home_form)
 
 

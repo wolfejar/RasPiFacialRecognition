@@ -163,10 +163,10 @@
                     {% for data_point in home_form.table_data.data_points %}
                         <tr>
                             <td>{{ data_point.timestamp }}</td>
-                            <td>{{ data_point.firstname}}</td>
-                            <td>{{ data_point.lastname}}</td>
-                            <td>{{ data_point.confidence}}</td>
-                            <td>{{ data_point.user.role}}</td>
+                            <td>{{ data_point.firstname[0] }}</td>
+                            <td>{{ data_point.lastname }}</td>
+                            <td>{{ data_point.confidence }}</td>
+                            <td>{{ data_point.user.role }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
