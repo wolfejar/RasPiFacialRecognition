@@ -7,11 +7,16 @@ from models.time_frame_enum import TimeFrameEnum
 import models.crop_faces as cf
 import models.model_train_pipeline as mtp
 import models.friend
+import models.classify_embeddings as ce
 import validators.add_friend_validator as add_friend_validator
 import validators.sign_in_validator as sign_in_validator
 import validators.sign_up_validator as sign_up_validator
 import validators.delete_friend_validator as delete_friend_validator
 import os
+import json
+from models.sql import SQL
+import ast
+
 from OpenSSL import SSL
 
 app = Flask(__name__)
@@ -35,6 +40,13 @@ def index_post():
     password = request.form['password']
     if sign_in_validator.validate_sign_in(username=email, password=password):
         session['email'] = email
+        session['id'] = models.friend.load(session['email'], session['email']).user_id
+        sql_instance = SQL()
+        results = sql_instance.get_friends(username=email)
+        friends = []
+        for friend in results:
+            friends.append(models.friend.Friend(username=friend[0], user_id=friend[1], first_name=friend[2], last_name=friend[3]))
+        session['friends'] = [friend.__dict__ for friend in friends]
         return redirect(url_for('home_get'))
     else:
         return index_get()
@@ -57,6 +69,7 @@ def sign_up_post():
     )
     if success:
         session['email'] = email
+        session['id'] = models.friend.load(session['email'], session['email']).user_id
         return redirect(url_for('home_get'))
     else:
         return sign_up_get()
@@ -65,6 +78,7 @@ def sign_up_post():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('email', None)
+    session.pop('id', None)
     return index_get()
 
 
@@ -186,9 +200,8 @@ def add_model_post():
     for fr in selected_friends:
         loaded_friends.append(models.friend.load_by_id(session['email'], fr))
     # create the embeddings and save to directory
-    home_id = models.friend.load(session['email'], session['email']).user_id
     model_name = request.form['model-name']
-    mtp.init_model_train_pipeline(home_id, loaded_friends, model_name)
+    mtp.init_model_train_pipeline(session['id'], loaded_friends, model_name)
     models_form = build_model_form(session['email'])
     return render_template('models.html', models_form=models_form)
 
@@ -201,6 +214,20 @@ def metrics_get():
 @app.route('/realtime_get', methods=['GET'])
 def realtime_get():
     return render_template('realtime.html')
+
+
+@app.route('/classify_embeddings', methods=['POST'])
+def classify_embeddings():
+    classifier = ce.EmbeddingsClassifier(session['id'], 'test_2')
+    embeddings_str = request.data.decode("utf-8")
+    result = classifier.classify_embeddings(json.loads(embeddings_str)['embeddings']).tolist()
+    print(result)
+    classified_friend = session['friends'][result.index(max(result))]
+    print(classified_friend)
+    # if result not in request.form['queue']:
+    return classified_friend['first_name']
+    # else:
+        # return None
 
 
 if __name__ == '__main__':

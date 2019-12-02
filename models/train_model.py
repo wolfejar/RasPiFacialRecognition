@@ -61,7 +61,7 @@ def train_classifier(user_id, friends, model_name, hidden_layers=[20], epochs=20
     x = np.array([data['encodings'][0] for data in friend_data])
     y = np.array([label for label in labels])
     indeces = range(len(y))
-    x_train, x_test, y_train, y_test, indeces_train, indeces_test = train_test_split(x, y, indeces, test_size=0.2)
+    x_train, x_test, y_train, y_test, indeces_train, indeces_test = train_test_split(x, y, indeces, test_size=0.1)
     print(len(x_train), len(y_train), len(x_test), len(y_test))
     print(indeces_train, indeces_test)
     x_train = torch.from_numpy(x_train).float()
