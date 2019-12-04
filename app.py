@@ -15,16 +15,11 @@ import validators.delete_friend_validator as delete_friend_validator
 import os
 import json
 from models.sql import SQL
-import ast
 
 from OpenSSL import SSL
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
-
-# context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
-# context.use_privatekey_file('server.key')
-# context.use_certificate_file('server.crt')
 
 
 @app.route('/')
@@ -41,12 +36,9 @@ def index_post():
     if sign_in_validator.validate_sign_in(username=email, password=password):
         session['email'] = email
         session['id'] = models.friend.load(session['email'], session['email']).user_id
-        sql_instance = SQL()
-        results = sql_instance.get_friends(username=email)
-        friends = []
-        for friend in results:
-            friends.append(models.friend.Friend(username=friend[0], user_id=friend[1], first_name=friend[2], last_name=friend[3]))
+        friends = models.friend.load_all_friends(session['id'])
         session['friends'] = [friend.__dict__ for friend in friends]
+        print(session['friends'])
         return redirect(url_for('home_get'))
     else:
         return index_get()
@@ -84,14 +76,14 @@ def logout():
 
 @app.route('/home_get', methods=['GET'])
 def home_get():
-    home_form = home_form_view_builder.build_home_form(model_id=8, time_frame=TimeFrameEnum.Today)
+    home_form = home_form_view_builder.build_home_form(session['id'], time_frame=TimeFrameEnum.Today)
     return render_template('home.html', home_form=home_form)
 
 
 @app.route('/home_post', methods=['POST'])
 def home_post():
     time_frame = TimeFrameEnum(int(request.form.get('timeframe')))
-    home_form = home_form_view_builder.build_home_form(model_id=8, time_frame=time_frame)
+    home_form = home_form_view_builder.build_home_form(session['id'], time_frame=time_frame)
     return render_template('home.html', home_form=home_form)
 
 
@@ -120,6 +112,7 @@ def add_friend_manual_post():
     home_username = session['email']
     if add_friend_validator.validate_friend(
             username=email, first_name=first_name, last_name=last_name, home_username=home_username):
+        session['friends'] = models.friend.load_all_friends(session['email'])
         return add_friend_images_post()
     else:
         return redirect(url_for('add_friend_manual_get'))
@@ -180,6 +173,7 @@ def delete_friend_post(form):
     # delete friend here
     friend_to_delete = form['username']
     delete_friend_validator.validate_delete_friend(session['email'], friend_to_delete)
+    session['friends'] = models.friend.load_all_friends(session['email'])
     return redirect(url_for('friends_get'))
 
 
@@ -202,8 +196,7 @@ def add_model_post():
     # create the embeddings and save to directory
     model_name = request.form['model-name']
     mtp.init_model_train_pipeline(session['id'], loaded_friends, model_name)
-    models_form = build_model_form(session['email'])
-    return render_template('models.html', models_form=models_form)
+    return redirect(url_for('train_get'))
 
 
 @app.route('/metrics_get', methods=['GET'])
@@ -218,16 +211,26 @@ def realtime_get():
 
 @app.route('/classify_embeddings', methods=['POST'])
 def classify_embeddings():
-    classifier = ce.EmbeddingsClassifier(session['id'], '3_10_5000')
+    model_id = mtp.get_active_name(session['id'])
+    print(model_id)
+    classifier = ce.EmbeddingsClassifier(session['id'], mtp.get_active_name(session['id']))
     embeddings_str = request.data.decode("utf-8")
     result = classifier.classify_embeddings(json.loads(embeddings_str)['embeddings']).tolist()
     print(result)
+    print(session['friends'])
     classified_friend = session['friends'][result.index(max(result))]
     print(classified_friend)
     # if result not in request.form['queue']:
     return classified_friend['first_name']
     # else:
         # return None
+
+
+@app.route('/set_active', methods=['POST'])
+def set_active():
+    model_id = request.form['model_id']
+    mtp.set_active(session['id'], model_id)
+    return redirect(url_for('train_get'))
 
 
 if __name__ == '__main__':

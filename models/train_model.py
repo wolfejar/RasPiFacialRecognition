@@ -1,6 +1,5 @@
 import pickle
 import os
-import friend
 from sklearn.model_selection import train_test_split
 import torch
 import torch.nn as nn
@@ -8,6 +7,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import itertools
 import numpy as np
+from torchviz import make_dot
 
 
 class MyNet(nn.Module):
@@ -91,24 +91,17 @@ def train_classifier(user_id, friends, model_name, hidden_layers=[20], epochs=20
     print(target)
     '''
     for epoch in range(epochs):  # loop over the dataset multiple times
-
-        running_loss = 0.0
         # zero the parameter gradients
         optimizer.zero_grad()
 
         # forward + backward + optimize
-        # print(x_train)
         outputs = model(x_train)
-        # print(outputs)
-        # print(y_train)
         loss = criterion(outputs, y_train)
         loss.backward()
         optimizer.step()
 
-        # print statistics
-        running_loss += loss.item()
-        print('%d loss: %.3f' % (epoch + 1, running_loss))
-        # print('%d loss: %.3f out: %r' % (epoch + 1, running_loss, outputs))
+        print('%d loss: %.3f' % (epoch + 1, loss.item()))
+        # print('%d loss: %.3f out: %r' % (epoch + 1, loss.item(), outputs))
 
     results = []
     for i, inp in enumerate(x_test):
@@ -121,7 +114,9 @@ def train_classifier(user_id, friends, model_name, hidden_layers=[20], epochs=20
 
     print('Finished Training')
 
+    dot = make_dot(model(x_test[0]), params=None)
+    graph_path = os.path.abspath('./static/img/model_graphs/' + str(user_id))
+    if not os.path.exists(graph_path):
+        os.mkdir(graph_path)
+    dot.render(filename=model_name, directory=graph_path, format='png')
     return results
-
-
-# train_classifier('1', [friend.load('wolfejar@ksu.edu', 'test@test.com')], 'test', hidden_layers=[30, 20, 10])

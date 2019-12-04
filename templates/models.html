@@ -87,17 +87,30 @@
                 <div class="row">
                 {% for model in models_form.models %}
 
-                    <div class="col-md-4">
-                        {% set list1 = model.file_path.split('/') %}
-                        <h2 class="text-truncate">{{ list1[-1][:-3] }}</h2>
-                        <p>{{ model.model_id }}</p>
-                        {% for c in model.classifications %}
-                            <p>{{ c.first_name }} {{ c.last_name }}</p>
-                            <img src="{{ c.image_path }}" height="100px" width="auto">
-                            <p>Timestamp: {{ c.timestamp }}</p>
-                            <p>Confidence: {{'%.2f'| format(c.confidence * 100|float)}}%</p>
-                        {% endfor %}
-                        <p><a class="btn btn-secondary" href="#" role="button">View Metrics »</a></p>
+                    <div class="col-md-4 table-bordered">
+                        <form method="post" action="/set_active">
+                            {% set list1 = model.file_path.split('/') %}
+                            {% set model_name = list1[-1][:-3] %}
+                            <input type="hidden" name="model_id" value="{{ model.model_id }}">
+                            {% if model.active %}
+                                <h3>Active</h3>
+                            {% else %}
+                                <button class="btn btn-secondary" type="submit" role="button">Set As Active</button>
+                            {% endif %}
+                            <h2 class="text-truncate">{{ model_name }}</h2>
+                            <!-- <p>{{ model.model_id }}</p> -->
+                            <img src="../static/img/model_graphs/{{ models_form.user_id }}/{{ model_name }}.png" height="300px" width="auto" alt="{{ model_name }}">
+                            <br>
+                        <!--
+                            {% for c in model.classifications %}
+                                <p>{{ c.first_name }} {{ c.last_name }}</p>
+                                <img src="{{ c.image_path }}" height="100px" width="auto">
+                                <p>Timestamp: {{ c.timestamp }}</p>
+                                <p>Confidence: {{'%.2f'| format(c.confidence * 100|float)}}%</p>
+                            {% endfor %}
+                         -->
+                            <p><a class="btn btn-secondary" href="#" role="button">View Metrics »</a></p>
+                        </form>
                     </div>
                 {% endfor %}
                 </div>

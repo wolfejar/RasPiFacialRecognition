@@ -156,6 +156,32 @@ class SQL:
         '''.format(classification.user_id, model_id, classification.first_name, classification.last_name, is_train,
                    classification.timestamp, classification.image_path, classification.confidence))
 
+    def get_active_model_id(self, home_user_id):
+        self.my_cursor.execute('''
+            Select M.ModelId
+            From Model M
+            Where M.IsActive = 1 and M.UserId = '{}'
+        '''.format(home_user_id))
+        return self.my_cursor.fetchone()[0]
+
+    def get_active_model_name(self, home_user_id):
+        self.my_cursor.execute('''
+            Select M.ModelName
+            From Model M
+            Where M.IsActive = 1 and M.UserId = '{}'
+        '''.format(home_user_id))
+        return self.my_cursor.fetchone()[0]
+
+    def set_model_active(self, user_id, model_id):
+        self.my_cursor.execute('''
+        Update Model M
+        Set M.IsActive = 0
+        Where M.IsActive = 1 and M.UserId = '{}';
+        Update Model M
+        Set M.IsActive = 1
+        Where M.ModelId = '{}' and M.UserId = '{}'
+        '''.format(user_id, model_id, user_id))
+
     def get_model_id_by_name(self, model_name):
         self.my_cursor.execute('''
             Select M.ModelId

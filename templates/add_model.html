@@ -71,6 +71,7 @@
             </div>
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <img class="loading-image" id="loading-gif" hidden src="../static/img/loading-gif.gif" alt="loading..">
             <!-- required -->
             <form action="/add_model_post" method="post">
                 <h2>Please select all friends to be recognized by the model</h2>
@@ -82,13 +83,15 @@
                 <p>model parameters listed here</p>
                 <label for="model-name">Model Name</label>
                 <input type="text" id="model-name" name="model-name">
-                <button type="submit">Submit</button>
+                <button type="submit" onclick="showLoader()">Submit</button>
             </form>
-        <div class="loader">
-            <img class="loading-image" src="loading.jpg" alt="loading..">
-        </div>
         </main>
     </div>
 </div>
+<script>
+    function showLoader() {
+        document.getElementById('loading-gif').removeAttribute('hidden')
+    }
+</script>
 </body>
 </html>

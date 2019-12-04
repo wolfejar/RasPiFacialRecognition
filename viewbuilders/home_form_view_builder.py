@@ -1,4 +1,3 @@
-from dateutil.tz import tzutc
 from models.sql import SQL
 from views.home_form import UserHomeForm
 from models.table_data import TableData
@@ -7,10 +6,16 @@ from dateutil import tz, relativedelta
 from datetime import datetime, timedelta
 
 
-def build_home_form(model_id, time_frame):
+def build_home_form(user_id, time_frame):
     sql_instance = SQL()
     time_stamp = get_time_stamp(time_frame)
-    results = sql_instance.load_model_classifications_since_time_stamp(model_id=model_id, time_stamp=time_stamp)
+    active_model_id = sql_instance.get_active_model_id(user_id)
+    print('Active model id:', active_model_id)
+    if active_model_id is not None:
+        results = sql_instance.load_model_classifications_since_time_stamp(model_id=active_model_id,
+                                                                           time_stamp=time_stamp)
+    else:
+        results = []
     # need to convert these classifications to actual classification objects
     print(results)
     classifications = []

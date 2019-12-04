@@ -1,0 +1,35 @@
+digraph {
+	graph [size="12,12"]
+	node [align=left fontsize=12 height=0.2 ranksep=0.1 shape=box style=filled]
+	5066966800 [label=AddBackward0 fillcolor=darkolivegreen1]
+	5066967696 -> 5066966800
+	5066967696 [label=SqueezeBackward3]
+	5066965848 -> 5066967696
+	5066965848 [label=MmBackward]
+	5066966744 -> 5066965848
+	5066966744 [label=UnsqueezeBackward0]
+	5066966128 -> 5066966744
+	5066966128 [label=ReluBackward0]
+	5066967360 -> 5066966128
+	5066967360 [label=AddBackward0]
+	5066967528 -> 5066967360
+	5066967528 [label=SqueezeBackward3]
+	5066966072 -> 5066967528
+	5066966072 [label=MmBackward]
+	5066965792 -> 5066966072
+	5066965792 [label=TBackward]
+	5066965512 -> 5066965792
+	5066965512 [label="
+ (10, 128)" fillcolor=lightblue]
+	5066967248 -> 5066967360
+	5066967248 [label="
+ (10)" fillcolor=lightblue]
+	5066966688 -> 5066965848
+	5066966688 [label=TBackward]
+	5066967192 -> 5066966688
+	5066967192 [label="
+ (4, 10)" fillcolor=lightblue]
+	5066966632 -> 5066966800
+	5066966632 [label="
+ (4)" fillcolor=lightblue]
+}

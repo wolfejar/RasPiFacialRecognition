@@ -54,4 +54,16 @@ def init_model_train_pipeline(home_id, friends, model_name):
         sql_instance.add_classification(model_id, 1, c)
 
 
+def set_active(user_id, model_id):
+    sql_instance = SQL()
+    sql_instance.set_model_active(user_id, model_id)
 
+
+def get_active_id(user_id):
+    sql_instance = SQL()
+    return sql_instance.get_active_model_id(user_id)
+
+
+def get_active_name(user_id):
+    sql_instance = SQL()
+    return sql_instance.get_active_model_name(user_id)
