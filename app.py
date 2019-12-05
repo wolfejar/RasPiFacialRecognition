@@ -14,7 +14,6 @@ import validators.sign_up_validator as sign_up_validator
 import validators.delete_friend_validator as delete_friend_validator
 import os
 import json
-from models.sql import SQL
 
 from OpenSSL import SSL
 
@@ -36,7 +35,7 @@ def index_post():
     if sign_in_validator.validate_sign_in(username=email, password=password):
         session['email'] = email
         session['id'] = models.friend.load(session['email'], session['email']).user_id
-        friends = models.friend.load_all_friends(session['id'])
+        friends = models.friend.load_all_friends(session['email'])
         session['friends'] = [friend.__dict__ for friend in friends]
         print(session['friends'])
         return redirect(url_for('home_get'))
