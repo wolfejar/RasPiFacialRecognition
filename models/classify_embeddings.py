@@ -1,6 +1,8 @@
 import torch
+import torch.nn.functional as F
 import os
 import numpy as np
+from models.sql import SQL
 
 
 class EmbeddingsClassifier:
@@ -9,7 +11,9 @@ class EmbeddingsClassifier:
         model = torch.load(self.model_path)
         model.eval()
         self.model = model
-        self.model_name = self.model_path.split('/')[-1][:-3]
+        self.model_name = model_name
+        sql_instance = SQL()
+        self.model_id = sql_instance.get_model_id_by_name(model_name)
 
     def classify_embeddings(self, embeddings):
         embeddings = torch.from_numpy(np.array(embeddings)).float()

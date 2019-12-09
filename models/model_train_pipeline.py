@@ -2,16 +2,18 @@ import models.create_embeddings as ce
 import models.train_model as tm
 import os
 from models.sql import SQL
-from train_model import MyNet
 import torch
 from models.classification import Classification
 from datetime import datetime
-from imutils import paths
+import pickle
 
 
-def init_model_train_pipeline(home_id, friends, model_name):
+def init_model_train_pipeline(home_id, friends, model_name, learning_rate=0.001, momentum=0.9, epochs=10000, split=0.2,
+                              hidden_layers=[20]):
     ce.encode_faces(friends)
-    test_results = tm.train_classifier(home_id, friends, model_name, hidden_layers=[10], epochs=5000)
+    test_results, metrics = tm.train_classifier(home_id, friends, model_name, hidden_layers=hidden_layers,
+                                                learning_rate=learning_rate, epochs=epochs, momentum=momentum,
+                                                split=split)
     # now that model is trained, we need to create objects to be stored in mysql
     # we need Model - modelid, userid, filepath
     # ModelClassifications - on test set we need to return the user_id, model_id, is_train (no), timestamp, image_path,
@@ -25,14 +27,15 @@ def init_model_train_pipeline(home_id, friends, model_name):
     sql_instance = SQL()
     sql_instance.save_model(home_id, model_path, model_name)
     print(model_name)
-    model_id = sql_instance.get_model_id_by_name(model_name)[0]
+    model_id = sql_instance.get_model_id_by_name(model_name)
     print(model_id)
+    metrics.model_id = model_id
     classi_bois = []
     for result in test_results:
         butt = []
         train_img_index = result[2]
-        result = result[0]
-        butt.append((result.tolist().index(max(result.tolist())), max(result.tolist()), train_img_index))
+        result = result[0].tolist()
+        butt.append((result.index(max(result)), max(result), train_img_index))
         classi_bois.append(butt)
 
     print(classi_bois)
@@ -53,6 +56,13 @@ def init_model_train_pipeline(home_id, friends, model_name):
         print(c.user_id)
         sql_instance.add_classification(model_id, 1, c)
 
+    metrics_path = os.path.abspath('./static/models/metrics/' + str(home_id) + '/')
+    if not os.path.exists(metrics_path):
+        os.mkdir(metrics_path)
+    f = open(metrics_path + '/' + str(model_id) + '.pickle', "wb+")
+    f.write(pickle.dumps(metrics))
+    f.close()
+
 
 def set_active(user_id, model_id):
     sql_instance = SQL()
@@ -61,7 +71,7 @@ def set_active(user_id, model_id):
 
 def get_active_id(user_id):
     sql_instance = SQL()
-    return sql_instance.get_active_model_id(user_id)
+    return int(sql_instance.get_active_model_id(user_id))
 
 
 def get_active_name(user_id):

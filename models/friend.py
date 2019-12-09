@@ -21,6 +21,12 @@ def load_by_id(home_username, friend_id):
     return Friend(username=result[0], user_id=result[1], first_name=result[2], last_name=result[3])
 
 
+def load_by_id_with_home_id(home_id, friend_id):
+    sql_instance = SQL()
+    result = sql_instance.get_individual_friend_by_id_with_homeid(home_id, friend_id)
+    return Friend(username=result[0], user_id=result[1], first_name=result[2], last_name=result[3])
+
+
 def load_all_friends(home_username):
     sql_instance = SQL()
     results = sql_instance.get_friends(username=home_username)

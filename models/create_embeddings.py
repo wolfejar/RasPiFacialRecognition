@@ -44,4 +44,10 @@ def encode_faces(friends):
             f.close()
 
 
-# encode_faces([friend.load('wolfejar@ksu.edu', 'test@test.com')])
+def create_embeddings_for_single_face(image):
+    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    height, width, channels = image.shape
+
+    box = (0, height, width, 0)
+    # compute the facial embedding for the face
+    return face_recognition.face_encodings(rgb, [box])

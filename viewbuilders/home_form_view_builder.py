@@ -28,7 +28,7 @@ def build_home_form(user_id, time_frame):
 
 
 def get_time_stamp(time_frame):
-    today = datetime.utcnow().date()
+    today = datetime.now()
     if time_frame.name == 'Week':
         today = datetime.now()
         start = today - timedelta((today.weekday() + 1) % 7)

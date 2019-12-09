@@ -77,13 +77,19 @@ class SQL:
             WHERE username = '{}'
             '''.format(user_id, username)
         )
+        self.my_cursor.execute(
+            '''
+            INSERT INTO AppUser(UserName, HomeUserId, HashedPassword, FirstName, LastName)
+            Values ('none', '{}', 'unknown', 'Unknown', 'User');
+            '''.format(user_id)
+        )
 
     def get_friends(self, username):
         user_id = self.get_user_id(username, username)
         self.my_cursor.execute('''
             Select U.UserName, U.UserId, U.FirstName, U.LastName
             From AppUser U
-            Where U.HomeUserId = '{}' and U.UserId != '{}'
+            Where U.HomeUserId = '{}' and U.UserId != '{}' and U.UserName != 'none'
         '''.format(user_id, user_id))
         return self.my_cursor.fetchall()
 
@@ -106,6 +112,14 @@ class SQL:
                 '''.format(home_user_id, friend_user_id))
         return self.my_cursor.fetchone()
 
+    def get_individual_friend_by_id_with_homeid(self, home_user_id, friend_user_id):
+        self.my_cursor.execute('''
+                    Select U.UserName, U.UserId, U.FirstName, U.LastName
+                    From AppUser U
+                    Where U.HomeUserId = '{}' and U.UserId = '{}'
+                '''.format(home_user_id, friend_user_id))
+        return self.my_cursor.fetchone()
+
     def add_friend(self, username, first_name, last_name, home_username, hashed_pass):
         home_user_id = self.get_user_id(home_username, home_username)
         self.my_cursor.execute(
@@ -118,6 +132,10 @@ class SQL:
     def delete_friend(self, home_username, friend_username):
         home_user_id = self.get_user_id(home_username, home_username)
         friend_user_id = self.get_user_id(home_username, friend_username)
+        self.my_cursor.execute('''
+        Delete From ModelUserClassification MUC
+        Where MUC.UserId = '{}'
+        '''.format(friend_user_id))
         self.my_cursor.execute('''
             Delete From AppUser U 
             Where U.HomeUserId = '{}' and U.UserId = '{}'
@@ -162,7 +180,11 @@ class SQL:
             From Model M
             Where M.IsActive = 1 and M.UserId = '{}'
         '''.format(home_user_id))
-        return self.my_cursor.fetchone()[0]
+        model = self.my_cursor.fetchone()
+        if model is not None:
+            return model[0]
+        else:
+            return None
 
     def get_active_model_name(self, home_user_id):
         self.my_cursor.execute('''
@@ -182,10 +204,31 @@ class SQL:
         Where M.ModelId = '{}' and M.UserId = '{}'
         '''.format(user_id, model_id, user_id))
 
+    def get_model_friends_ids(self, model_id):
+        self.my_cursor.execute('''
+        Select MUC.UserId
+        From ModelUserClassification MUC
+        Where MUC.ModelId = '{}'
+        '''.format(int(model_id)))
+        unique_ids = []
+        results = self.my_cursor.fetchall()
+        for friend_id in results:
+            if friend_id[0] not in unique_ids:
+                unique_ids.append(friend_id[0])
+        return unique_ids
+
     def get_model_id_by_name(self, model_name):
         self.my_cursor.execute('''
             Select M.ModelId
             From Model M
             Where M.ModelName = '{}'
         '''.format(model_name))
+        return self.my_cursor.fetchone()[0]
+
+    def get_unknown_user(self, home_id):
+        self.my_cursor.execute('''
+        Select U.UserId, U.UserName, U.FirstName, U.LastName
+        From AppUser U 
+        Where U.UserName = 'none' and U.HomeUserId = '{}'
+        '''.format(home_id))
         return self.my_cursor.fetchone()

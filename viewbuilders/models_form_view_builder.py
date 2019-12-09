@@ -3,6 +3,8 @@ from models.sql import SQL
 from models.friend import Friend
 from models.model_data import ModelData
 from models.classification import Classification
+import pandas as pd
+import os
 
 
 def build_model_form(username):
@@ -23,4 +25,19 @@ def build_model_form(username):
             web_path = '../static/img/out/training/' + orig_path.split('/')[-2] + '/' + orig_path.split('/')[-1]
             classifications.append(Classification(c[1], c[2], c[3], c[4], c[5], web_path))
         models.append(ModelData(model_id=model[0], classifications=classifications, file_path=model[1]))
-    return ModelsForm(user_id=user_id, friends=friends, models=models)
+    x_vals, y_vals = get_training_data_distribution(username, sql_instance)
+    return ModelsForm(user_id=user_id, friends=friends, models=models,
+                      x_vals=x_vals, y_vals=y_vals)
+
+
+def get_training_data_distribution(username, sql_instance):
+    data_path = './static/img/data'
+    friend_ids = [d for d in os.listdir('./static/img/data') if not d.startswith('.')]
+    counts = [[], []]
+    for id in friend_ids:
+        friend = sql_instance.get_individual_friend_by_id(username, id)
+        # print(friend[2], friend[3], len(os.listdir(data_path + '/' + id)))
+        counts[0].append(friend[2] + " " + friend[3])
+        counts[1].append(len(os.listdir(data_path + '/' + id)))
+
+    return counts

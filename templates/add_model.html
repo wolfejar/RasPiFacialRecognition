@@ -71,27 +71,117 @@
             </div>
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <img class="loading-image" id="loading-gif" hidden src="../static/img/loading-gif.gif" alt="loading..">
             <!-- required -->
+            <h1>Your training set</h1>
+            <canvas class="my-4 chartjs-render-monitor" id="myChart" width="400" height="100"
+                    style="display: block; width: 400px; height: 100px;"></canvas>
+            <div id="chartjs-tooltip"></div>
+            <br>
+            <br>
             <form action="/add_model_post" method="post">
                 <h2>Please select all friends to be recognized by the model</h2>
                 {% for friend in models_form.friends %}
                     <label for="{{ friend.user_id }}">{{  friend.first_name }} {{ friend.last_name }}</label>
-                    <input type="checkbox" name="friend" id="{{ friend.user_id }}" value="{{ friend.user_id }}">
+                    <input type="checkbox" name="friend" class="align-items-sm-center" id="{{ friend.user_id }}" value="{{ friend.user_id }}">
                 {% endfor %}
-                <h2>If you would like to set your own model parameters, adjust them here</h2>
-                <p>model parameters listed here</p>
+                <br>
+                <h3>If you would like to set your own model parameters, adjust them here</h3>
+                <label for="learning_rate">Learning Rate</label>
+                <input type="number" step="0.001" min="0" name="learning_rate" id="learning_rate" value="0.001">
+                <label for="momentum">Momentum</label>
+                <input type="number" step="0.01" min="0" name="momentum" id="momentum" value="0.9">
+                <div id="container">
+                    <label for="hiddenlayer-1">Hidden Layer</label>
+                    <input type="number" step="1" min="0" name="hiddenlayer[]" id="hiddenlayer-1" value="20">
+                </div>
+                <button type="button" class="btn-dark" onclick="addLayer()">Add another layer</button>
+                <br>
+                <br>
+                <label for="epochs">Epochs</label>
+                <input type="number" step="1" min="1" value="10000" name="epochs" id="epochs">
+                <p>For now, we will only stop at this number if we've already reached 100% accuracy on test set.</p>
+                <br>
+                <label for="split">Test Set Proportion</label>
+                <input type="number" step="0.1" min="0" max="0.9" value="0.2" name="split" id="split">
+                <br>
                 <label for="model-name">Model Name</label>
-                <input type="text" id="model-name" name="model-name">
-                <button type="submit" onclick="showLoader()">Submit</button>
+                <input type="text" required id="model-name" name="model-name">
+                <button class="form-control btn-success" type="submit" onclick="showLoader()">Submit</button>
             </form>
         </main>
+    <img class="loading-image" id="loading-gif" hidden src="../static/img/loading-gif.gif" alt="loading.."
+            style="width: 15%; height:auto; align-content: baseline;">
     </div>
 </div>
 <script>
+    let i = 2;
     function showLoader() {
-        document.getElementById('loading-gif').removeAttribute('hidden')
+        let gif = document.getElementById('loading-gif');
+        gif.removeAttribute("hidden");
+
+    }
+    function addLayer() {
+        var container = document.getElementById("container");
+        container.appendChild(document.createElement("br"));
+        var label = document.createElement("label");
+        label.for = 'hiddenlayer[]' + i.toString();
+        label.innerText = "Hidden Layer ";
+        var input = document.createElement("input");
+        input.type = "number";
+        input.name = "hiddenlayer[]";
+        input.min = "0";
+        input.step = "1";
+        input.id = "hiddenlayer-" + i.toString();
+        input.value = "20";
+        container.appendChild(label);
+        container.appendChild(input);
+        // Append a line break
+        i++;
     }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script>
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for item in models_form.train_distribution_x_values%}
+                        "{{item}}",
+                    {% endfor %}],
+            datasets: [{
+                data: [{% for item in models_form.train_distribution_y_values %}
+                        "{{item}}",
+                      {% endfor %}],
+                lineTension: 0,
+                backgroundColor: '#007bff',
+                borderColor: '#007bff',
+                borderWidth: 4,
+                pointBackgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    categoryPercentage: 1.0,
+                    barPercentage: 1.0
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Samples'
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+        }
+    });
+</script>
+
+
 </body>
 </html>

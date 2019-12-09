@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Metrics</title>
-    <link href="../static/css/grid.css" rel="stylesheet">
     <link href="../static/css/bootstrap.css" rel="stylesheet">
-
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -74,35 +72,70 @@
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div class="container">
-
                 <h1>Metrics</h1>
-                <p class="lead">Select a model from the list below to view metrics</p>
-                &nbsp;
-
-                <h3>Models</h3>
 
                 <div class="row">
-                    <div class="col-4">Model 1</div>
-                    <div class="col-4">View Metrics</div>
-                    <div class="col-4">Edit</div>
+                    <div class="col-4 h2">Training Statistics</div>
+                    <canvas class="my-4 chartjs-render-monitor" id="myChart" width="400" height="100"
+                    style="display: block; width: 400px; height: 100px;"></canvas>
+                    <div id="chartjs-tooltip"></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-4 h2">Confusion Matrix</div>
+                    <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                    <td></td>
+                    {% for label in metrics_form.metrics.labels %}
+                        <td>{{ label }}</td>
+                    {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in metrics_form.metrics.confusion_matrix %}
+                        <tr>
+                            <td>{{ metrics_form.metrics.labels[loop.index-1] }}</td>
+                            {% for c in row %}
+                                <td>{{ c }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
                 </div>
 
                 <div class="row">
-                    <div class="col-4">Model 2</div>
-                    <div class="col-4">View Metrics</div>
-                    <div class="col-4">Edit</div>
-                </div>
+                    <div class="col-4 h2">Classifications</div>
 
-                <div class="row">
-                    <div class="col-4">Model 3</div>
-                    <div class="col-4">View Metrics</div>
-                    <div class="col-4">Edit</div>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">Model 4</div>
-                    <div class="col-4">View Metrics</div>
-                    <div class="col-4">Edit</div>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>precision</td>
+                                <td>recall</td>
+                                <td>f1-score</td>
+                                <td>support</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user, info in metrics_form.metrics.classification_report.items() %}
+                                <tr>
+                                    <td>{{ user }}</td>
+                                    {% if info is mapping %}
+                                        {% for key, value in info.items() %}
+                                            <td>{{ value }}</td>
+                                        {% endfor %}
+                                    {% else %}
+                                        <td>{{ info }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
 
 
@@ -110,5 +143,42 @@
         </main>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script>
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in metrics_form.metrics.loss_data %}
+                        "{{loop.index}}",
+                    {% endfor %}],
+            datasets: [{
+                data: [{% for item in metrics_form.metrics.loss_data %}
+                        "{{item}}",
+                      {% endfor %}],
+                lineTension: 0,
+                borderColor: '#007bff',
+                borderWidth: 4,
+                pointBackgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Loss'
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+        }
+    });
+</script>
 </body>
 </html>

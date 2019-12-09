@@ -5,6 +5,8 @@
     <title>Video Monitoring</title>
     <link href="../static/css/bootstrap.css" rel="stylesheet">
     <script defer type="module" src="{{ url_for('static', filename='node_modules/face-api.js/dist/face-api.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/static/js/capture-video-frame.js"></script>
     <script defer src="../static/js/video.js"></script>
 </head>
 <body>
@@ -76,7 +78,28 @@
         <!-- </main> -->
     </div>
 </div>
-<video id="video" autoplay muted width="640" height="480" style=" border: 1px solid #ddd; position: absolute"></video>
+<video id="video" autoplay muted width="10%" height="auto" style=" border: 1px solid #ddd; position: absolute"></video>
 <p id="demo"></p>
+<p hidden id="friend"></p>
+<p hidden id="confidence"></p>
+<p hidden id="timestamp"></p>
+<img hidden id="screenshot">
+<script>
+    function test() {
+        var frame = captureVideoFrame('video', 'png');
+        var image = $('#screenshot');
+        image.attr('src', frame.dataUri);
+        var formdata = new FormData();
+        let timestamp = document.getElementById("timestamp").innerText.replace(' ', '_');
+        formdata.append('fileshot', frame.blob, timestamp + '.' +frame.format);
+        $.ajax({
+            url: '/classify_image',
+            method: 'POST',
+            data: formdata,
+            processData: false,
+            contentType: false
+        });
+    }
+</script>
 </body>
 </html>
