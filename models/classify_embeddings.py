@@ -17,4 +17,6 @@ class EmbeddingsClassifier:
 
     def classify_embeddings(self, embeddings):
         embeddings = torch.from_numpy(np.array(embeddings)).float()
-        return self.model(embeddings)
+        output = self.model(embeddings)
+        print("Output:", output)
+        return output

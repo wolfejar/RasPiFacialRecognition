@@ -85,8 +85,8 @@
 <p hidden id="timestamp"></p>
 <img hidden id="screenshot">
 <script>
-    function test() {
-        var frame = captureVideoFrame('video', 'png');
+    function test(video) {
+        var frame = captureVideoFrame(video, 'png');
         var image = $('#screenshot');
         image.attr('src', frame.dataUri);
         var formdata = new FormData();

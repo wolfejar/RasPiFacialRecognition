@@ -31,8 +31,8 @@ def build_model_form(username):
 
 
 def get_training_data_distribution(username, sql_instance):
-    data_path = './static/img/data'
-    friend_ids = [d for d in os.listdir('./static/img/data') if not d.startswith('.')]
+    data_path = './static/img/out/training'
+    friend_ids = [d for d in os.listdir(data_path) if not d.startswith('.')]
     counts = [[], []]
     for id in friend_ids:
         friend = sql_instance.get_individual_friend_by_id(username, id)

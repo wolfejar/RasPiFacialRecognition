@@ -87,7 +87,7 @@ video.addEventListener('play', () => {
             if(sendimage) {
                 document.getElementById("timestamp").innerText = Date.now().toString();
                 console.log("Sending image to server");
-                test()
+                test(video)
             }
         }
     }, 2000)// wait 2 seconds before giving new inputs to model

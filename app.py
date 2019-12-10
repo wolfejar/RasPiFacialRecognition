@@ -291,22 +291,22 @@ def classify_image():
             img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/')
             file.save(img_path + '/' + filename, 'png')
         else:
+            in_q = False
+            should_add = False
             for i in range(len(session['queue'])):
                 session_c = session['queue'][i]
-                in_q = False
-                should_add = False
                 if session_c['friend'] == t['friend']:
                     in_q = True
                     if t['time'] > session_c['time'] + timedelta(minutes=5):
                         session['queue'][i] = t
                         should_add = True
-                if in_q is False:
-                    session['queue'].append(t)
-                if in_q is False or should_add is True:
-                    c_to_add = [cl for cl in classifications if cl.user_id == t['friend']][0]
-                    models.classification.save_classification(mtp.get_active_id(session['id']), c_to_add)
-                    img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/')
-                    file.save(img_path + '/' + filename, 'png')
+            if in_q is False:
+                session['queue'].append(t)
+            if in_q is False or should_add is True:
+                c_to_add = [cl for cl in classifications if cl.user_id == t['friend']][0]
+                models.classification.save_classification(mtp.get_active_id(session['id']), c_to_add)
+                img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/')
+                file.save(img_path + '/' + filename, 'png')
 
     print('queue after', session['queue'])
     session['queue'] = session['queue']
