@@ -21,6 +21,8 @@ import pickle
 import realtime_classification_pipeline as rcp
 import numpy
 from PIL import Image
+from augment_images import augment_images
+import shutil
 
 from OpenSSL import SSL
 
@@ -151,6 +153,8 @@ def add_friend_images_post():
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
         image.save(save_dir + '/' + image.filename)
+    if request.form.get('augment-images'):
+        augment_images(friend.user_id)
     if cf.crop_and_review_faces(str(friend.user_id), './static/img/data/', './static/img/out/training/'):
         return review_images_get(home_username=session['email'], friend_username=request.form['email'], review=True)
     return friends_get()
@@ -254,9 +258,11 @@ def classify_image():
     model_name = mtp.get_active_name(session['id'])
     file = request.files['fileshot']
     filename = file.filename
-    file = Image.open(file)
-    img_arr = numpy.array(file)
-    results = rcp.classify_image_from_client(session['id'], mtp.get_active_name(session['id']), img_arr)
+    # clear the temp_from_client dir
+    folder = os.path.abspath('./static/img/data/temp_from_client/')
+    source_img_path = os.path.abspath('./static/img/data/temp_from_client/' + filename)
+    file.save(source_img_path)
+    results = rcp.classify_image_from_client(session['id'], mtp.get_active_name(session['id']), source_img_path)
     friends = pickle.loads(
         open(os.path.abspath('./static/models/' + str(session['id']) + '/' + model_name + '.pickle'), 'rb').read())
     detected_friends = []
@@ -269,13 +275,17 @@ def classify_image():
         img_path = os.path.abspath('./static/img/data/' + str(unknown_results[0]) + '/')
         if not os.path.exists(img_path):
             os.mkdir(img_path)
-        cl = models.classification.Classification(unknown_results[0], unknown_results[1], unknown_results[2], 1,
+        cl = models.classification.Classification(unknown_results[0], unknown_results[1], unknown_results[2], 0,
                                                   datetime.now(), img_path + '/' + filename)
         models.classification.save_classification(mtp.get_active_id(session['id']), cl)
-        file.save(img_path + '/' + filename, 'png')
+        shutil.copyfile(source_img_path, img_path + '/' + filename)
+        # file.save(os.path.join(img_path, filename))
     else:
         for result in results:
-            detected_friends.append((friends[result[0].index(max(result[0]))], max(result[0])))
+            if max(result[0]) < 0.45:
+                detected_friends.append((2, max(result[0])))  # the id of unknown user, and the output
+            else:
+                detected_friends.append((friends[result[0].index(max(result[0]))], max(result[0])))
     for friend, c in detected_friends:
         c_tuples.append({'friend': friend, 'time': datetime.now()})
         friend = models.friend.load_by_id_with_home_id(session['id'], friend)
@@ -288,8 +298,9 @@ def classify_image():
             session['queue'].append(t)
             c_to_add = [cl for cl in classifications if cl.user_id == t['friend']][0]
             models.classification.save_classification(mtp.get_active_id(session['id']), c_to_add)
-            img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/')
-            file.save(img_path + '/' + filename, 'png')
+            img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/' + filename)
+            shutil.copyfile(source_img_path, img_path)
+            # file.save(os.path.join(img_path, filename))
         else:
             in_q = False
             should_add = False
@@ -305,11 +316,19 @@ def classify_image():
             if in_q is False or should_add is True:
                 c_to_add = [cl for cl in classifications if cl.user_id == t['friend']][0]
                 models.classification.save_classification(mtp.get_active_id(session['id']), c_to_add)
-                img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/')
-                file.save(img_path + '/' + filename, 'png')
+                img_path = os.path.abspath('./static/img/data/' + str(c_to_add.user_id) + '/' + filename)
+                shutil.copyfile(source_img_path, img_path)
+                # file.save(img_path + '/' + filename)
 
     print('queue after', session['queue'])
     session['queue'] = session['queue']
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)
     return ''
 
 

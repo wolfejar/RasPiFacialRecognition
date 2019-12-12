@@ -64,25 +64,6 @@ video.addEventListener('play', () => {
             if (!!detections[i] && detections[i]['score'] > 0.4) {
                 // console.log(detections);
                 sendimage = true;
-                /*make ajax call (send the detections and current queue -> response contains friend name and confidence, if friend not in queue already)
-                await classify(detections[i]['descriptor']);
-                let friend = document.getElementById('friend').innerText;
-                console.log('Friend is set to :' + friend);
-                let shouldEnqueue = true;
-                if(!queue.isEmpty()) {
-                    for (var c in queue.items) {
-                        if(queue['items'][c]['friend'] === friend) {
-                            shouldEnqueue = false;
-                        }
-                    }
-                }
-                if(shouldEnqueue && friend) {
-                    console.log("sending data to server");
-                    test();
-                    console.log(friend);
-                    queue.enqueue({'friend': friend, 'timestamp': Date.now()})
-                }
-                */
             }
             if(sendimage) {
                 document.getElementById("timestamp").innerText = Date.now().toString();

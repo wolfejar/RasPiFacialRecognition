@@ -5,15 +5,15 @@ from classify_embeddings import EmbeddingsClassifier
 from sql import SQL
 
 
-def classify_image_from_client(home_id, model_name, image):
+def classify_image_from_client(home_id, model_name, image_path):
     print('classifying image from client')
-    # rgb = cv2.imdecode(image, cv2.COLOR_BGR2RGB)
+    image = cv2.imread(image_path)
     rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
     # detect the (x, y)-coordinates of the bounding boxes
     # corresponding to each face in the input image
     boxes = face_recognition.face_locations(rgb, model='hog')
     if len(boxes) == 0:
+        print('Detect using cnn')
         boxes = face_recognition.face_locations(rgb, model='cnn')
     cropped_images = []
     for box in boxes:

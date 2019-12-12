@@ -5,7 +5,6 @@ import os
 import create_embeddings as ce
 import classify_embeddings as cle
 import model_train_pipeline as mtp
-import classification as c
 import pickle
 import models.friend
 from datetime import datetime
@@ -128,8 +127,3 @@ def crop_and_classify(image_path, home_user_id):
         out_image_path = os.path.abspath('./static/img/out/training/' + str(friend.user_id) + '/' +
                                          datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f') + '.png')
         cv2.imwrite(out_image_path, cropped_images[i])
-        '''
-        classification = c.Classification(friend.user_id, friend.first_name, friend.last_name, max(result),
-                                          datetime.now(), out_image_path)
-        c.save_classification(model_id=classifier.get_model_id(), classification=classification)
-        '''
