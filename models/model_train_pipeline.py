@@ -30,15 +30,15 @@ def init_model_train_pipeline(home_id, friends, model_name, learning_rate=0.001,
     model_id = sql_instance.get_model_id_by_name(model_name)
     print(model_id)
     metrics.model_id = model_id
-    classi_bois = []
+    cls = []
     for result in test_results:
-        butt = []
+        r = []
         train_img_index = result[2]
         result = result[0].tolist()
-        butt.append((result.index(max(result)), max(result), train_img_index))
-        classi_bois.append(butt)
+        r.append((result.index(max(result)), max(result), train_img_index))
+        cls.append(r)
 
-    print(classi_bois)
+    print(cls)
     classifications = []
     image_paths = []
     for f in friends:
@@ -47,7 +47,7 @@ def init_model_train_pipeline(home_id, friends, model_name, learning_rate=0.001,
             image_paths.append(current_dir + '/' + img)
     # for i, path in enumerate(image_paths):
     #    print(i, path.split('/')[-2:])
-    for i, c in enumerate(classi_bois):
+    for i, c in enumerate(cls):
         classifications.append(Classification(friends[c[0][0]].user_id, friends[c[0][0]].first_name,
                                               friends[c[0][0]].last_name, c[0][1], datetime.now(),
                                               image_paths[c[0][2]]))
